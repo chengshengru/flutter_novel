@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
+import 'package:provider/single_child_widget.dart';
 
 class NovelBookIntroViewModel extends BaseViewModel {
   NovelBookNetModel _netBookModel;
 
-  NovelBookIntroContentEntity get contentEntity =>_netBookModel.bookIntroContentEntity;
+  NovelBookIntroContentEntity get contentEntity =>
+      _netBookModel.bookIntroContentEntity;
 
   NovelBookIntroViewModel(this._netBookModel);
 
@@ -18,14 +20,14 @@ class NovelBookIntroViewModel extends BaseViewModel {
 
   void getDetailInfo(String bookId) async {
     var result = await _netBookModel.getNovelDetailInfo(bookId);
-    if (result.isSuccess && result?.data != null) {
+    if (result!.isSuccess && result?.data != null) {
       contentEntity.detailInfo = result.data;
       notifyListeners();
     }
   }
 
   void getNovelShortReview(String bookId) async {
-    var result = await _netBookModel.getNovelShortReview(bookId,limit: 2);
+    var result = await _netBookModel.getNovelShortReview(bookId, limit: 2);
     if (result.isSuccess && result?.data != null) {
       contentEntity.shortComment = result.data;
       notifyListeners();
@@ -33,7 +35,7 @@ class NovelBookIntroViewModel extends BaseViewModel {
   }
 
   void getNovelBookReview(String bookId) async {
-    var result = await _netBookModel.getNovelBookReview(bookId,limit: 2);
+    var result = await _netBookModel.getNovelBookReview(bookId, limit: 2);
     if (result.isSuccess && result?.data != null) {
       contentEntity.bookReviewInfo = result.data;
       notifyListeners();
@@ -49,9 +51,7 @@ class NovelBookIntroViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
-    return null;
+  SingleChildWidget getProviderContainer() {
+    return SingleChildBuilder(builder: (context, child) => SizedBox.shrink());
   }
 }
-
-

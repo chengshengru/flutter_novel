@@ -4,40 +4,38 @@ import 'package:provider/provider.dart';
 
 abstract class BaseStatelessView<M extends BaseViewModel>
     extends StatelessWidget {
-
-  const BaseStatelessView({Key key}) : super(key: key);
+  const BaseStatelessView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 //    M viewModel = buildViewModel(context, false);
 
-    Widget resultWidget;
+    Widget? resultWidget;
 
-    M viewModel=buildViewModel(context);
+    M? viewModel = buildViewModel(context);
 
     if (viewModel != null) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
         loadData(context, viewModel);
         return viewModel;
-      }, child: Consumer<M>(
-          builder: (BuildContext context, M viewModel, Widget child) {
-        return buildView(context, viewModel);
+      }, child: Consumer<M>(builder: (context, viewModel, child) {
+        return buildView(context, viewModel) ?? SizedBox.shrink();
       }));
     } else {
       loadData(context, null);
       resultWidget = buildView(context, null);
     }
-    return resultWidget;
+    return resultWidget ?? SizedBox.shrink();
   }
 
-  Widget buildView(BuildContext context, M viewModel);
+  Widget? buildView(BuildContext context, M? viewModel);
 
   /// 为什么buildViewModel方法要放以一个抽象自己构建出来？直接让父Widget构建出来传过来不更好么？
   /// 因为我发现像tabLayout会触发viewModel的dispose方法……但是如果以父widget传入，那么viewModel是final的，自然会触发已经dispose的provider不能再次绑定的错误
-  M buildViewModel(BuildContext context);
+  M? buildViewModel(BuildContext context);
 
   /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
-  void loadData(BuildContext context, M viewModel);
+  void loadData(BuildContext context, M? viewModel);
 
   bool isEnableLoadingView() {
     return false;
@@ -46,8 +44,7 @@ abstract class BaseStatelessView<M extends BaseViewModel>
 
 abstract class BaseStatefulView<M extends BaseViewModel>
     extends StatefulWidget {
-
-  const BaseStatefulView({Key key}) : super(key: key);
+  const BaseStatefulView({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -59,8 +56,7 @@ abstract class BaseStatefulView<M extends BaseViewModel>
 
 abstract class BaseStatefulViewState<T extends BaseStatefulView,
     M extends BaseViewModel> extends State<T> {
-
-   M viewModel;
+  M? viewModel;
 
   @override
   void initState() {
@@ -70,38 +66,35 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
 
   @override
   Widget build(BuildContext context) {
+    viewModel = buildViewModel(context);
 
-    viewModel=buildViewModel(context);
-
-    Widget resultWidget;
-    if (viewModel != null&&isBindViewModel()) {
+    Widget? resultWidget;
+    if (viewModel != null && isBindViewModel()) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
         loadData(context, viewModel);
-        return viewModel;
-      }, child: Consumer<M>(
-          builder: (BuildContext context, M viewModel, Widget child) {
-        return buildView(context, viewModel);
+        return viewModel!;
+      }, child: Consumer<M>(builder: (context, viewModel, child) {
+        return buildView(context, viewModel) ?? SizedBox.shrink();
       }));
     } else {
-      loadData(context,viewModel);
+      loadData(context, viewModel);
       resultWidget = buildView(context, viewModel);
     }
 
-    return resultWidget;
+    return resultWidget ?? SizedBox.shrink();
   }
 
-  Widget buildView(BuildContext context, M viewModel);
+  Widget? buildView(BuildContext context, M? viewModel);
 
   /// 初始化数据
   void initData();
 
-   M buildViewModel(BuildContext context);
+  M? buildViewModel(BuildContext context);
 
-   /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
-  void loadData(BuildContext context, M viewModel);
+  /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
+  void loadData(BuildContext context, M? viewModel);
 
-  bool isBindViewModel(){
+  bool isBindViewModel() {
     return true;
   }
-
 }

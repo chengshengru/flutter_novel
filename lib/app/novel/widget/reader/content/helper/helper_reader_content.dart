@@ -40,7 +40,7 @@ class ReaderContentProvider {
 
     TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    if(content==null){
+    if (content == null) {
       return [];
     }
 
@@ -66,8 +66,8 @@ class ReaderContentProvider {
         /// 配置画笔 ///
         textPainter.text = TextSpan(
             text: tempContent,
-            style:
-                TextStyle(fontSize: fontSize.toDouble(), height: lineHeight / fontSize));
+            style: TextStyle(
+                fontSize: fontSize.toDouble(), height: lineHeight / fontSize));
         textPainter.layout(maxWidth: width);
 
         /// 当前段落内容计算偏移量
@@ -173,9 +173,7 @@ class ReaderChapterPageContentConfig {
         map['currentContentParagraphSpacing'];
     chapterConfig.currentPageIndex = map['currentPageIndex'];
     chapterConfig.currentChapterId = map['currentChapterId'];
-    chapterConfig.paragraphContents = (map['paragraphConfigs'] as List)
-        ?.map((e) => e == null ? null : (e as String))
-        ?.toList();
+    chapterConfig.paragraphContents = map['paragraphConfigs'];
     return chapterConfig;
   }
 }
@@ -183,70 +181,70 @@ class ReaderChapterPageContentConfig {
 class ReaderContentDataValue {
   List<ReaderChapterPageContentConfig> chapterContentConfigs = [];
   HashMap<int, ReaderContentCanvasDataValue> chapterCanvasDataMap = HashMap();
-  String contentData;
+  String? contentData;
 
   int chapterIndex = 0;
-  String novelId;
-  String title;
+  String? novelId;
+  String? title;
 
   int currentPageIndex = 0;
 
-  ContentState contentState=ContentState.STATE_NORMAL;
+  ContentState contentState = ContentState.STATE_NORMAL;
 
-  bool isSameChapter(ReaderContentDataValue target){
-    return target?.chapterIndex!=null&&target.chapterIndex==this.chapterIndex&&target?.novelId!=null&&target.novelId==this.novelId;
+  bool isSameChapter(ReaderContentDataValue target) {
+    return target?.chapterIndex != null &&
+        target.chapterIndex == this.chapterIndex &&
+        target?.novelId != null &&
+        target.novelId == this.novelId;
   }
 
-  void clearCalculateResult(){
+  void clearCalculateResult() {
     chapterContentConfigs.clear();
     chapterCanvasDataMap.clear();
   }
 
-  void clear(){
+  void clear() {
     clearCalculateResult();
-    contentData=null;
-    chapterIndex=0;
-    title=null;
-    currentPageIndex=0;
+    contentData = null;
+    chapterIndex = 0;
+    title = null;
+    currentPageIndex = 0;
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is ReaderContentDataValue &&
-              runtimeType == other.runtimeType &&
-              chapterIndex == other.chapterIndex &&
-              novelId == other.novelId &&
-              currentPageIndex == other.currentPageIndex;
+      other is ReaderContentDataValue &&
+          runtimeType == other.runtimeType &&
+          chapterIndex == other.chapterIndex &&
+          novelId == other.novelId &&
+          currentPageIndex == other.currentPageIndex;
 
   @override
   int get hashCode =>
-      chapterIndex.hashCode ^
-      novelId.hashCode ^
-      currentPageIndex.hashCode;
+      chapterIndex.hashCode ^ novelId.hashCode ^ currentPageIndex.hashCode;
 }
 
 class ReaderContentCanvasDataValue {
-  int pageIndex;
+  late int pageIndex;
 
-  ui.Picture pagePicture;
-  ui.Image pageImage;
+  late ui.Picture pagePicture;
+  late ui.Image pageImage;
 }
 
 class ReaderParseContentDataValue {
+  ContentState contentState = ContentState.STATE_NORMAL;
 
-  ContentState contentState=ContentState.STATE_NORMAL;
-
-  String content;
-  String title;
-  String novelId;
-  int chapterIndex;
+  String? content;
+  String? title;
+  String? novelId;
+  int? chapterIndex;
 
   ReaderParseContentDataValue(
-      this.content, this.novelId,this.title,this.chapterIndex);
+      this.content, this.novelId, this.title, this.chapterIndex);
 }
 
-enum ContentState{
+enum ContentState {
   STATE_NORMAL,
   STATE_NOT_FOUND,
   STATE_NET_ERROR,

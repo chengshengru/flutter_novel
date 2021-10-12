@@ -11,33 +11,35 @@ import 'package:provider/provider.dart';
 
 class NovelIntroBottomMenuView
     extends BaseStatefulView<NovelBookShelfViewModel> {
-  final NovelDetailInfo bookInfo;
+  final NovelDetailInfo? bookInfo;
 
   NovelIntroBottomMenuView(this.bookInfo);
 
   @override
-  BaseStatefulViewState<BaseStatefulView<BaseViewModel>, NovelBookShelfViewModel> buildState() {
+  BaseStatefulViewState<BaseStatefulView<BaseViewModel>,
+      NovelBookShelfViewModel> buildState() {
     return NovelIntroBottomMenuViewState();
   }
 }
 
-class NovelIntroBottomMenuViewState extends BaseStatefulViewState<NovelIntroBottomMenuView,NovelBookShelfViewModel>{
+class NovelIntroBottomMenuViewState extends BaseStatefulViewState<
+    NovelIntroBottomMenuView, NovelBookShelfViewModel> {
   @override
-  Widget buildView(BuildContext context, NovelBookShelfViewModel viewModel) {
+  Widget? buildView(BuildContext context, NovelBookShelfViewModel? viewModel) {
     if (widget.bookInfo == null) {
       return Container();
     } else {
       List<NovelBookInfo> currentBookShelf =
-          viewModel.bookshelfInfo.currentBookShelf;
+          viewModel!.bookshelfInfo.currentBookShelf;
 
       NovelBookInfo currentBookInfo = NovelBookInfo()
-        ..bookId = widget.bookInfo.id
-        ..cover = widget.bookInfo.cover
-        ..title = widget.bookInfo.title;
+        ..bookId = widget.bookInfo?.id
+        ..cover = widget.bookInfo?.cover
+        ..title = widget.bookInfo?.title;
       bool isBookShelfBook = false;
 
       for (NovelBookInfo info in currentBookShelf) {
-        if (widget.bookInfo.id == info.bookId) {
+        if (widget.bookInfo!.id == info.bookId) {
           currentBookInfo = info;
           isBookShelfBook = true;
           break;
@@ -56,19 +58,15 @@ class NovelIntroBottomMenuViewState extends BaseStatefulViewState<NovelIntroBott
                 Expanded(
                   child: InkWell(
                     onTap: () {
-
-                      if(!isBookShelfBook) {
+                      if (!isBookShelfBook) {
                         viewModel.addBookToShelf(NovelBookInfo()
-                          ..bookId = widget.bookInfo.id
-                          ..title = widget.bookInfo.title
+                          ..bookId = widget.bookInfo!.id
+                          ..title = widget.bookInfo!.title
                           ..cover = Uri.decodeComponent(
-                              widget.bookInfo.cover
-                                  .split("/agent/")
-                                  .last));
-                      }else{
-                        viewModel.removeBookFromShelf(widget.bookInfo.id);
+                              widget.bookInfo!.cover.split("/agent/").last));
+                      } else {
+                        viewModel.removeBookFromShelf(widget.bookInfo!.id);
                       }
-
                     },
                     child: Container(
                       color: Colors.white,
@@ -90,10 +88,8 @@ class NovelIntroBottomMenuViewState extends BaseStatefulViewState<NovelIntroBott
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      APPRouter.instance.route(
-                          NovelBookReaderView.buildIntent(
-                              context,
-                              currentBookInfo));
+                      APPRouter.instance.route(NovelBookReaderView.buildIntent(
+                          context, currentBookInfo));
                     },
                     child: Container(
                       color: Colors.green,
@@ -147,9 +143,8 @@ class NovelIntroBottomMenuViewState extends BaseStatefulViewState<NovelIntroBott
   }
 
   @override
-  void loadData(BuildContext context, NovelBookShelfViewModel viewModel) {}
+  void loadData(BuildContext context, NovelBookShelfViewModel? viewModel) {}
 
   @override
-  void initData() {
-  }
+  void initData() {}
 }

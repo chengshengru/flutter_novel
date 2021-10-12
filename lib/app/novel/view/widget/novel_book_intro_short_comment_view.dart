@@ -7,7 +7,7 @@ import 'package:flutter_novel/base/util/utils_time.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class NovelIntroShortCommentView extends StatelessWidget {
-  final NovelShortComment comments;
+  final NovelShortComment? comments;
 
   NovelIntroShortCommentView(this.comments);
 
@@ -21,52 +21,50 @@ class NovelIntroShortCommentView extends StatelessWidget {
           padding: EdgeInsets.all(20),
         );
       } else {
-        return  Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "热门短评",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    InkWell(
-                        child: Row(children: <Widget>[
-                          Icon(Icons.edit, color: Colors.green, size: 15),
-                          Text('写短评',
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.green))
-                        ], mainAxisSize: MainAxisSize.min),
-                        onTap: () {})
-                  ],
-                ),
-                ListView.separated(
-                    padding: EdgeInsets.only(top: 5),
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    primary: false,
-                    itemBuilder: (_, index) =>
-                        _ItemDoc(commentInfo: comments?.docs[index]),
-                    separatorBuilder: (_, index) => Divider(
-                          height: 20,
-                          indent: 0.0,
-                          color: Colors.grey,
-                        ),
-                    itemCount: comments?.docs?.length ?? 0),
-                InkWell(
-                    child: Container(
-                        padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-                        child: Text('全部短评',
-                            style:
-                                TextStyle(color: Colors.green, fontSize: 14)),
-                        alignment: Alignment.center),
-                    onTap: (comments?.docs?.length ?? 0) == 0 ? null : () {})
-              ],
-            ),
-            padding: EdgeInsets.all(20),
-          );
+        return Container(
+          color: Colors.white,
+          child: Column(
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "热门短评",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  InkWell(
+                      child: Row(children: <Widget>[
+                        Icon(Icons.edit, color: Colors.green, size: 15),
+                        Text('写短评',
+                            style: TextStyle(fontSize: 14, color: Colors.green))
+                      ], mainAxisSize: MainAxisSize.min),
+                      onTap: () {})
+                ],
+              ),
+              ListView.separated(
+                  padding: EdgeInsets.only(top: 5),
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  primary: false,
+                  itemBuilder: (_, index) =>
+                      _ItemDoc(commentInfo: comments!.docs![index]!),
+                  separatorBuilder: (_, index) => Divider(
+                        height: 20,
+                        indent: 0.0,
+                        color: Colors.grey,
+                      ),
+                  itemCount: comments?.docs?.length ?? 0),
+              InkWell(
+                  child: Container(
+                      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                      child: Text('全部短评',
+                          style: TextStyle(color: Colors.green, fontSize: 14)),
+                      alignment: Alignment.center),
+                  onTap: (comments?.docs?.length ?? 0) == 0 ? null : () {})
+            ],
+          ),
+          padding: EdgeInsets.all(20),
+        );
       }
     });
   }
@@ -75,7 +73,7 @@ class NovelIntroShortCommentView extends StatelessWidget {
 class _ItemDoc extends StatelessWidget {
   final Docs commentInfo;
 
-  _ItemDoc({Key key, @required this.commentInfo}) : super(key: key);
+  _ItemDoc({Key? key, required this.commentInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +92,7 @@ class _ItemDoc extends StatelessWidget {
                       width: 25,
                       height: 25,
                       imageUrl: NovelApi.READER_IMAGE_URL +
-                          commentInfo?.author?.avatar,
+                          commentInfo.author!.avatar,
                       fit: BoxFit.cover,
 //                    errorWidget: (context, url, error) =>
 //                        Image.asset("img/loading_4.png"),
@@ -113,9 +111,9 @@ class _ItemDoc extends StatelessWidget {
                   TagView(
                       tag: 'Lv${commentInfo?.author?.lv}',
                       textColor:
-                          commentInfo.author.lv > 5 ? Colors.blueAccent : null,
+                          commentInfo.author!.lv > 5 ? Colors.blueAccent : null,
                       borderColor:
-                          commentInfo.author.lv > 5 ? Colors.blueAccent : null)
+                          commentInfo.author!.lv > 5 ? Colors.blueAccent : null)
                 ]),
                 SizedBox(
                   height: 5,
@@ -144,7 +142,7 @@ class _ItemDoc extends StatelessWidget {
 
                 /// 时间/回复/赞
                 Row(children: <Widget>[
-                  Text('${TimeUtils.friendlyDateTime(commentInfo?.created)}',
+                  Text('${TimeUtils.friendlyDateTime(commentInfo.created)}',
                       style: TextStyle(fontSize: 12, color: Colors.grey)),
                   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Icon(Feather.thumbs_up, size: 15, color: Colors.grey),

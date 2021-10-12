@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 
 abstract class BaseRouterManager {
-
   const BaseRouterManager();
 
   @protected
-  void jumpToTarget(RouterRequestOption option,Widget targetRouterWidget) {
+  void jumpToTarget(RouterRequestOption option, Widget targetRouterWidget) {
     Navigator.push(
         option.context,
         option.customRouter == null
             ? MaterialPageRoute(builder: (context) {
                 return targetRouterWidget;
               })
-            : option.customRouter);
+            : option.customRouter!);
   }
-
 }
 
 class RouterRequestOption {
@@ -22,7 +20,7 @@ class RouterRequestOption {
 
   BuildContext context;
 
-  Route customRouter;
+  Route? customRouter;
 
   RouterRequestOption(this.targetName, this.context, {this.customRouter});
 }

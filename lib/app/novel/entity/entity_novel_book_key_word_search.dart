@@ -4,9 +4,8 @@ part 'entity_novel_book_key_word_search.g.dart';
 
 @JsonSerializable()
 class NovelKeyWordSearch extends Object {
-
   @JsonKey(name: 'books')
-  List<Books> books;
+  List<Books>? books;
 
   @JsonKey(name: 'total')
   int total;
@@ -14,18 +13,20 @@ class NovelKeyWordSearch extends Object {
   @JsonKey(name: 'ok')
   bool ok;
 
-  NovelKeyWordSearch(this.books,this.total,this.ok,);
+  NovelKeyWordSearch(
+    this.books,
+    this.total,
+    this.ok,
+  );
 
-  factory NovelKeyWordSearch.fromJson(Map<String, dynamic> srcJson) => _$NovelKeyWordSearchFromJson(srcJson);
+  factory NovelKeyWordSearch.fromJson(Map<String, dynamic> srcJson) =>
+      _$NovelKeyWordSearchFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NovelKeyWordSearchToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Books extends Object {
-
   @JsonKey(name: '_id')
   String id;
 
@@ -81,29 +82,47 @@ class Books extends Object {
   int sizetype;
 
   @JsonKey(name: 'highlight')
-  Highlight highlight;
+  Highlight? highlight;
 
-  Books(this.id,this.hasCp,this.title,this.aliases,this.cat,this.author,this.site,this.cover,this.shortIntro,this.lastChapter,this.retentionRatio,this.banned,this.allowMonthly,this.latelyFollower,this.wordCount,this.contentType,this.superscript,this.sizetype,this.highlight,);
+  Books(
+    this.id,
+    this.hasCp,
+    this.title,
+    this.aliases,
+    this.cat,
+    this.author,
+    this.site,
+    this.cover,
+    this.shortIntro,
+    this.lastChapter,
+    this.retentionRatio,
+    this.banned,
+    this.allowMonthly,
+    this.latelyFollower,
+    this.wordCount,
+    this.contentType,
+    this.superscript,
+    this.sizetype,
+    this.highlight,
+  );
 
-  factory Books.fromJson(Map<String, dynamic> srcJson) => _$BooksFromJson(srcJson);
+  factory Books.fromJson(Map<String, dynamic> srcJson) =>
+      _$BooksFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$BooksToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Highlight extends Object {
-
   @JsonKey(name: 'title')
-  List<String> title;
+  List<String?>? title;
 
-  Highlight(this.title,);
+  Highlight(
+    this.title,
+  );
 
-  factory Highlight.fromJson(Map<String, dynamic> srcJson) => _$HighlightFromJson(srcJson);
+  factory Highlight.fromJson(Map<String, dynamic> srcJson) =>
+      _$HighlightFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$HighlightToJson(this);
-
 }
-
-  

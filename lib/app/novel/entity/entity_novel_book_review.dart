@@ -13,7 +13,7 @@ class NovelBookReview extends Object {
   int today;
 
   @JsonKey(name: 'reviews')
-  List<Reviews> reviews;
+  List<Reviews?>? reviews;
 
   @JsonKey(name: 'ok')
   bool ok;
@@ -37,10 +37,10 @@ class Reviews extends Object {
   int rating;
 
   @JsonKey(name: 'author')
-  Author author;
+  Author? author;
 
   @JsonKey(name: 'helpful')
-  Helpful helpful;
+  Helpful? helpful;
 
   @JsonKey(name: 'likeCount')
   int likeCount;

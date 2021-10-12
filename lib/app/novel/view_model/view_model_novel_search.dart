@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
+import 'package:provider/single_child_widget.dart';
 
 class NovelBookSearchViewModel extends BaseViewModel {
   final NovelBookNetModel _netBookModel;
@@ -11,17 +12,17 @@ class NovelBookSearchViewModel extends BaseViewModel {
 
   void getSearchWord(String keyWord) async {
     var result=await _netBookModel.getSearchWord(keyWord);
-    if(result.isSuccess&&result?.data!=null&&result.data.length>0) {
+    if(result.isSuccess&&result?.data!=null&&result.data!.length>0) {
       contentEntity.autoCompleteSearchWord.clear();
-      contentEntity.autoCompleteSearchWord.addAll(result.data);
+      contentEntity.autoCompleteSearchWord.addAll(result.data!);
       notifyListeners();
     }
   }
   void getHotSearchWord() async {
     var result=await _netBookModel.getHotSearchWord();
-    if(result.isSuccess&&result?.data!=null&&result.data.length>0) {
+    if(result.isSuccess&&result?.data!=null&&result.data!.length>0) {
       contentEntity.searchHotWord.clear();
-      contentEntity.searchHotWord.addAll(result.data);
+      contentEntity.searchHotWord.addAll(result.data!);
       notifyListeners();
     }
   }
@@ -35,8 +36,8 @@ class NovelBookSearchViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
-    return null;
+  SingleChildWidget getProviderContainer() {
+    return SingleChildBuilder(builder: (context, child) => SizedBox.shrink());
   }
 }
 

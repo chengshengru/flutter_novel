@@ -9,8 +9,7 @@ part of 'entity_novel_book_key_word_search.dart';
 NovelKeyWordSearch _$NovelKeyWordSearchFromJson(Map<String, dynamic> json) {
   return NovelKeyWordSearch(
     (json['books'] as List)
-        ?.map(
-            (e) => e == null ? null : Books.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => Books.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['total'] as int,
     json['ok'] as bool,
@@ -36,7 +35,7 @@ Books _$BooksFromJson(Map<String, dynamic> json) {
     json['cover'] as String,
     json['shortIntro'] as String,
     json['lastChapter'] as String,
-    (json['retentionRatio'] as num)?.toDouble(),
+    (json['retentionRatio'])?.toDouble(),
     json['banned'] as int,
     json['allowMonthly'] as bool,
     json['latelyFollower'] as int,

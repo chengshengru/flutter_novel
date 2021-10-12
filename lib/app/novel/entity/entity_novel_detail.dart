@@ -27,7 +27,7 @@ class NovelDetailInfo extends Object {
   int starRatingCount;
 
   @JsonKey(name: 'starRatings')
-  List<StarRatings> starRatings;
+  List<StarRatings?>? starRatings;
 
   @JsonKey(name: 'isMakeMoneyLimit')
   bool isMakeMoneyLimit;
@@ -54,7 +54,7 @@ class NovelDetailInfo extends Object {
   String authorDesc;
 
   @JsonKey(name: 'rating')
-  Rating rating;
+  Rating? rating;
 
   @JsonKey(name: 'hasCopyright')
   bool hasCopyright;
@@ -126,10 +126,10 @@ class NovelDetailInfo extends Object {
   String lastChapter;
 
   @JsonKey(name: 'gender')
-  List<dynamic> gender;
+  List<dynamic>? gender;
 
   @JsonKey(name: 'tags')
-  List<dynamic> tags;
+  List<dynamic>? tags;
 
   @JsonKey(name: 'advertRead')
   bool advertRead;

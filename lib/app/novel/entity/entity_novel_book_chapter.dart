@@ -2,10 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'entity_novel_book_chapter.g.dart';
 
-
 @JsonSerializable()
 class NovelBookChapter extends Object {
-
   @JsonKey(name: '_id')
   String id;
 
@@ -22,7 +20,7 @@ class NovelBookChapter extends Object {
   String link;
 
   @JsonKey(name: 'chapters')
-  List<Chapters> chapters;
+  List<Chapters>? chapters;
 
   @JsonKey(name: 'updated')
   String updated;
@@ -30,18 +28,25 @@ class NovelBookChapter extends Object {
   @JsonKey(name: 'host')
   String host;
 
-  NovelBookChapter(this.id,this.name,this.source,this.book,this.link,this.chapters,this.updated,this.host,);
+  NovelBookChapter(
+    this.id,
+    this.name,
+    this.source,
+    this.book,
+    this.link,
+    this.chapters,
+    this.updated,
+    this.host,
+  );
 
-  factory NovelBookChapter.fromJson(Map<String, dynamic> srcJson) => _$NovelBookChapterFromJson(srcJson);
+  factory NovelBookChapter.fromJson(Map<String, dynamic> srcJson) =>
+      _$NovelBookChapterFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$NovelBookChapterToJson(this);
-
 }
-
 
 @JsonSerializable()
 class Chapters extends Object {
-
   @JsonKey(name: '_id')
   String bookId;
 
@@ -78,14 +83,25 @@ class Chapters extends Object {
   @JsonKey(name: 'isVip')
   bool isVip;
 
-  String novelId;
+  late String novelId;
 
-  Chapters(this.bookId,this.title,this.link,this.id,this.time,this.chapterCover,this.totalpage,this.partsize,this.order,this.currency,this.unreadble,this.isVip,);
+  Chapters(
+    this.bookId,
+    this.title,
+    this.link,
+    this.id,
+    this.time,
+    this.chapterCover,
+    this.totalpage,
+    this.partsize,
+    this.order,
+    this.currency,
+    this.unreadble,
+    this.isVip,
+  );
 
-  factory Chapters.fromJson(Map<String, dynamic> srcJson) => _$ChaptersFromJson(srcJson);
+  factory Chapters.fromJson(Map<String, dynamic> srcJson) =>
+      _$ChaptersFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$ChaptersToJson(this);
-
 }
-
-  

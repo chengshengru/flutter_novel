@@ -3,44 +3,46 @@ import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
+import 'package:provider/single_child_widget.dart';
 
 class NovelBookShelfViewModel extends BaseViewModel {
   NovelBookDBModel _dbBookModel;
   NovelBookNetModel _netBookModel;
 
-  NovelBookShelfInfo get bookshelfInfo =>_dbBookModel?.bookshelfInfo;
+  NovelBookShelfInfo? get bookshelfInfo => _dbBookModel?.bookshelfInfo;
 
   NovelBookShelfViewModel(this._dbBookModel, this._netBookModel);
 
   @override
-  Widget getProviderContainer() {
-    return null;
+  SingleChildWidget getProviderContainer() {
+    return SingleChildBuilder(builder: (context, child) => SizedBox.shrink());
   }
 
-  void addBookToShelf(NovelBookInfo book) async{
+  void addBookToShelf(NovelBookInfo book) async {
     _dbBookModel?.addBook(book);
     bookshelfInfo?.currentBookShelf?.add(book);
     notifyListeners();
   }
-  void removeBookFromShelf(String bookId) async{
+
+  void removeBookFromShelf(String bookId) async {
     _dbBookModel?.removeBook(bookId);
-    NovelBookInfo targetBook;
-    for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
-      if(bookInfo.bookId==bookId){
-        targetBook=bookInfo;
+    NovelBookInfo? targetBook;
+    for (NovelBookInfo bookInfo in bookshelfInfo!.currentBookShelf) {
+      if (bookInfo.bookId == bookId) {
+        targetBook = bookInfo;
         break;
       }
     }
-
-    bookshelfInfo.currentBookShelf.remove(targetBook);
+    if (targetBook != null) {
+      bookshelfInfo?.currentBookShelf.remove(targetBook);
+    }
     notifyListeners();
-
   }
 
   void getSavedBook() {
-    _dbBookModel?.getSavedBook()?.then((data){
-      bookshelfInfo.currentBookShelf=data;
-      if(!isDisposed&&hasListeners) {
+    _dbBookModel?.getSavedBook()?.then((data) {
+      bookshelfInfo?.currentBookShelf = data;
+      if (!isDisposed && hasListeners) {
         notifyListeners();
       }
     });
@@ -90,5 +92,3 @@ class NovelBookShelfViewModel extends BaseViewModel {
     _netBookModel?.getBookIntroduction();
   }
 }
-
-

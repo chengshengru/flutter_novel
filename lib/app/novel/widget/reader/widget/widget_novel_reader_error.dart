@@ -3,17 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/helper_reader_content.dart';
 
 class NovelReaderErrorPageWidget extends StatelessWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
 
   NovelReaderErrorPageWidget(this.dataValue);
 
   @override
   Widget build(BuildContext context) {
+    if (dataValue == null) {
+      return SizedBox.shrink();
+    }
     Widget result;
 
-    switch (dataValue.contentState) {
+    switch (dataValue!.contentState) {
       case ContentState.STATE_NORMAL:
-        result = Container(width: 0,height: 0,);
+        result = Container(
+          width: 0,
+          height: 0,
+        );
         break;
       case ContentState.STATE_NOT_FOUND:
         result = Container(

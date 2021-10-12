@@ -95,14 +95,11 @@ class NovelReaderContentModel {
   }
 
   void parseChapterContent(ReaderParseContentDataValue contentData) async {
-    if (contentData.content == null ||
-        contentData.content.length == 0) {
-
-      contentData.content="加载出错";
-
+    if (contentData.content == null || contentData.content!.length == 0) {
+      contentData.content = "加载出错";
     }
 
-    if(viewModel==null){
+    if (viewModel == null) {
       return;
     }
 
@@ -197,7 +194,9 @@ class NovelReaderContentModel {
                         : targetData.chapterContentConfigs.length)
                     : 10));
         isPre ? index-- : index++) {
-      if (viewModel == null||microContentParseQueue==null||contentParseQueue==null) {
+      if (viewModel == null ||
+          microContentParseQueue == null ||
+          contentParseQueue == null) {
         break;
       }
 

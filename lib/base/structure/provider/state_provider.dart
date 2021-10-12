@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/structure/provider/base_provider.dart';
 import 'package:flutter_novel/base/widget/view_common_loading.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 enum PageState {
   STATE_IDLE,
@@ -11,7 +12,7 @@ enum PageState {
 }
 
 class PageStateProvider extends BaseProvider {
-  PageState currentState;
+  late PageState currentState;
 
   Widget mLoadingView = CommonLoadingView();
 
@@ -37,8 +38,8 @@ class PageStateProvider extends BaseProvider {
   }
 
   @override
-  Widget getProviderContainer() {
-     return ChangeNotifierProvider(builder: (BuildContext context) {
+  SingleChildWidget getProviderContainer() {
+     return ChangeNotifierProvider(create: (BuildContext context) {
       return PageStateProvider();
     });
   }

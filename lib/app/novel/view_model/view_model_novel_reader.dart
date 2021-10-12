@@ -12,6 +12,7 @@ import 'package:flutter_novel/app/novel/widget/reader/manager/manager_reader_pro
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_config.dart';
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_content.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
+import 'package:provider/single_child_widget.dart';
 
 typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
 typedef void OnContentChanged(ReaderOperateEnum currentContentOperate);
@@ -53,7 +54,7 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
+  SingleChildWidget getProviderContainer() {
     return null;
   }
 
@@ -234,11 +235,11 @@ class NovelReaderViewModel extends BaseViewModel {
       return;
     }
     var sourceInfo = await _netModel.getNovelBookSource(novelId);
-    if (sourceInfo?.data != null && sourceInfo.data.length > 0) {
+    if (sourceInfo?.data != null && sourceInfo.data!.length > 0) {
       var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
       if (result.isSuccess && result?.data != null) {
         setCatalogData(novelId, bookInfo.currentChapterIndex,
-            bookInfo.currentPageIndex, result.data);
+            bookInfo.currentPageIndex, result.data!);
       }
     }
   }

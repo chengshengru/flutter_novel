@@ -33,7 +33,7 @@ class AnimationControllerWithListenerNumber extends AnimationController {
     this.reverseDuration,
     this.debugLabel,
     this.animationBehavior = AnimationBehavior.normal,
-    @required TickerProvider vsync,
+    required TickerProvider vsync,
   }) : super(
             value: value,
             duration: duration,
@@ -65,7 +65,7 @@ class AnimationControllerWithListenerNumber extends AnimationController {
     this.duration,
     this.reverseDuration,
     this.debugLabel,
-    @required TickerProvider vsync,
+    required TickerProvider vsync,
     this.animationBehavior = AnimationBehavior.preserve,
   })  : super.unbounded(
       value: value,

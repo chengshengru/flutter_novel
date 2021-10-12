@@ -31,7 +31,7 @@ Books _$BooksFromJson(Map<String, dynamic> json) {
     json['cover'] as String,
     json['shortIntro'] as String,
     json['lastChapter'] as String,
-    (json['retentionRatio'] as num)?.toDouble(),
+    (json['retentionRatio'])?.toDouble(),
     json['latelyFollower'] as int,
     json['majorCate'] as String,
     json['minorCate'] as String,
@@ -39,7 +39,7 @@ Books _$BooksFromJson(Map<String, dynamic> json) {
     json['isSerial'] as bool,
     json['contentType'] as String,
     json['allowFree'] as bool,
-    (json['otherReadRatio'] as num)?.toDouble(),
+    (json['otherReadRatio'])?.toDouble(),
   );
 }
 

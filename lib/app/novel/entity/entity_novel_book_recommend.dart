@@ -6,7 +6,7 @@ part 'entity_novel_book_recommend.g.dart';
 class NovelBookRecommend extends Object {
 
   @JsonKey(name: 'books')
-  List<Books> books;
+  List<Books?>? books;
 
   @JsonKey(name: 'ok')
   bool ok;

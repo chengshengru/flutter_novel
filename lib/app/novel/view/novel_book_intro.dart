@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
+import 'package:flutter/material.dart' hide NestedScrollView;
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
@@ -15,17 +17,14 @@ import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
-import 'package:flutter/material.dart' hide NestedScrollView;
 
 class NovelBookIntroView extends BaseStatefulView<NovelBookIntroViewModel> {
-
   final String targetBookId;
 
   NovelBookIntroView(this.targetBookId);
 
-  static NovelBookIntroView getPageView(APPRouterRequestOption option){
-    return NovelBookIntroView(option.params["bookId"]);
+  static NovelBookIntroView getPageView(APPRouterRequestOption option) {
+    return NovelBookIntroView(option.params!["bookId"]);
   }
 
   @override
@@ -37,24 +36,24 @@ class NovelBookIntroView extends BaseStatefulView<NovelBookIntroViewModel> {
 
 class _NovelBookIntroViewState
     extends BaseStatefulViewState<NovelBookIntroView, NovelBookIntroViewModel> {
-  Color bgStartColor;
-  Color bgNormalColor;
-  Color bgEndColor;
+  Color? bgStartColor;
+  Color? bgNormalColor;
+  Color? bgEndColor;
 
   @override
-  Widget buildView(BuildContext context, NovelBookIntroViewModel viewModel) {
+  Widget? buildView(BuildContext context, NovelBookIntroViewModel? viewModel) {
     var pinnedHeaderHeight =
         MediaQuery.of(context).padding.top + kToolbarHeight;
-    NovelDetailInfo detailInfo = viewModel?.contentEntity?.detailInfo;
-    NovelShortComment commentInfo = viewModel?.contentEntity?.shortComment;
-    NovelBookReview bookReview = viewModel?.contentEntity?.bookReviewInfo;
-    NovelBookRecommend bookRecommend =
+    NovelDetailInfo? detailInfo = viewModel?.contentEntity?.detailInfo;
+    NovelShortComment? commentInfo = viewModel?.contentEntity?.shortComment;
+    NovelBookReview? bookReview = viewModel?.contentEntity?.bookReviewInfo;
+    NovelBookRecommend? bookRecommend =
         viewModel?.contentEntity?.bookRecommendInfo;
 
     if ((bgEndColor == null || bgEndColor == null) &&
         detailInfo?.cover != null) {
       initPageTopColor(
-              Uri.decodeComponent(detailInfo.cover.split("/agent/").last))
+              Uri.decodeComponent(detailInfo!.cover!.split("/agent/").last))
           .then((data) {
         setState(() {
           bgStartColor = data?.lightVibrantColor?.color ?? Colors.white;
@@ -90,17 +89,15 @@ class _NovelBookIntroViewState
                         break;
                       case 3:
                         return Container(
-                          color: Colors.white,
+                            color: Colors.white,
                             height: 50,
                             width: double.infinity,
                             alignment: Alignment.center,
                             child: Text('${detailInfo?.copyrightDesc}',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.grey)));
-                        break;
                       default:
-                        return null;
-                        break;
+                        return SizedBox.shrink();
                     }
                   },
                   itemCount: 4,
@@ -129,19 +126,22 @@ class _NovelBookIntroViewState
   void initData() {}
 
   @override
-  void loadData(BuildContext context, NovelBookIntroViewModel viewModel) {
-    viewModel.getNovelInfo(widget.targetBookId);
+  void loadData(BuildContext context, NovelBookIntroViewModel? viewModel) {
+    viewModel!.getNovelInfo(widget.targetBookId);
   }
 
   List<Widget> _headerSliverBuilder(
-      BuildContext context, NovelDetailInfo detailInfo) {
+      BuildContext context, NovelDetailInfo? detailInfo) {
     List<Widget> headerContentList = [
       /// 头部折叠介绍页
       SliverAppBar(
         //1.在标题左侧显示的一个控件，在首页通常显示应用的 logo；在其他界面通常显示为返回按钮
-        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed: (){
-          Navigator.of(context).pop();
-        },),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Text(detailInfo?.title ?? "正在查询"),
         backgroundColor: bgStartColor ?? Colors.white,
         flexibleSpace: FlexibleSpaceBar(

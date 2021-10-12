@@ -15,15 +15,15 @@ class ReaderPageManager {
   static const TYPE_ANIMATION_COVER_TURN = 2;
   static const TYPE_ANIMATION_SLIDE_TURN = 3;
 
-  BaseAnimationPage currentAnimationPage;
-  TouchEvent currentTouchData;
+  late BaseAnimationPage currentAnimationPage;
+  late TouchEvent currentTouchData;
   int currentAnimationType = 0;
 
-  STATE currentState;
+  late STATE currentState;
 
-  GlobalKey canvasKey;
+  late GlobalKey canvasKey;
 
-  AnimationController animationController;
+  late AnimationController animationController;
 
 //  Animation<Offset> animation;
 
@@ -241,8 +241,8 @@ class TouchEvent<T> {
   static const int ACTION_CANCEL = 3;
 
   int action;
-  T touchDetail;
-  Offset touchPos =
+  late T touchDetail;
+  Offset? touchPos =
       Offset(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight());
 
   TouchEvent(this.action, this.touchPos);

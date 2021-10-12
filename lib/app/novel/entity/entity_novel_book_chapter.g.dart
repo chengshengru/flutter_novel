@@ -14,8 +14,7 @@ NovelBookChapter _$NovelBookChapterFromJson(Map<String, dynamic> json) {
     json['book'] as String,
     json['link'] as String,
     (json['chapters'] as List)
-        ?.map((e) =>
-            e == null ? null : Chapters.fromJson(e as Map<String, dynamic>))
+        ?.map((e) => Chapters.fromJson(e as Map<String, dynamic>))
         ?.toList(),
     json['updated'] as String,
     json['host'] as String,

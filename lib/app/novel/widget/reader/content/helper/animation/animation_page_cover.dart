@@ -16,12 +16,12 @@ class CoverPageAnimation extends BaseAnimationPage {
 
   Offset mStartPoint = Offset(0, 0);
 
-  Tween<Offset> currentAnimationTween;
-  Animation<Offset> currentAnimation;
+  late Tween<Offset> currentAnimationTween;
+  late Animation<Offset> currentAnimation;
 
-  ANIMATION_TYPE animationType;
+  late ANIMATION_TYPE animationType;
 
-  AnimationStatusListener statusListener;
+  late AnimationStatusListener statusListener;
 
   @override
   Animation<Offset> getCancelAnimation(
@@ -56,6 +56,7 @@ class CoverPageAnimation extends BaseAnimationPage {
     if (currentAnimation == null) {
       buildCurrentAnimation(controller, canvasKey);
     }
+
     /// 很神奇的一点，这个监听器有时会自己变成null……偶发性的，试了好多次也没找到如何触发的……但它就是存在变成null的情况
     /// 所以要检测一下，变成null了就给它弄回去
     if (statusListener == null) {
@@ -70,7 +71,7 @@ class CoverPageAnimation extends BaseAnimationPage {
               } else {
                 readerViewModel.prePage();
               }
-              canvasKey.currentContext.findRenderObject().markNeedsPaint();
+              canvasKey.currentContext?.findRenderObject()?.markNeedsPaint();
             }
             break;
           case AnimationStatus.forward:
@@ -81,7 +82,10 @@ class CoverPageAnimation extends BaseAnimationPage {
       currentAnimation.addStatusListener(statusListener);
     }
 
-    if(statusListener!=null&&!(controller as AnimationControllerWithListenerNumber).statusListeners.contains(statusListener)){
+    if (statusListener != null &&
+        !(controller as AnimationControllerWithListenerNumber)
+            .statusListeners
+            .contains(statusListener)) {
       currentAnimation.addStatusListener(statusListener);
     }
 
@@ -121,12 +125,12 @@ class CoverPageAnimation extends BaseAnimationPage {
   @override
   void onTouchEvent(TouchEvent event) {
     if (event.touchPos != null) {
-      mTouch = event.touchPos;
+      mTouch = event.touchPos!;
     }
 
     switch (event.action) {
       case TouchEvent.ACTION_DOWN:
-        mStartPoint = event.touchPos;
+        mStartPoint = event.touchPos!;
         break;
       case TouchEvent.ACTION_MOVE:
       case TouchEvent.ACTION_UP:

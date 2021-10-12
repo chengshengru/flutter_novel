@@ -1,6 +1,5 @@
 ///refer:[https://github.com/shichunlei/flutter_app/blob/acec8f0c8a32532801f85741425f75e3104703e5/lib/utils/date_format.dart]
-class TimeUtils{
-
+class TimeUtils {
   /// 输出四位数年份
   ///
   /// Example:
@@ -252,7 +251,6 @@ class TimeUtils{
   static const String z = 'z';
   static const String Z = 'Z';
 
-
   static String _digits(int value, int length) {
     String ret = '$value';
     if (ret.length < length) {
@@ -348,12 +346,12 @@ class TimeUtils{
 
   static int dayInYear(DateTime date) =>
       date.difference(DateTime(date.year, 1, 1)).inDays;
-  
-  static String formatDateByStr(String datetimeStr, {List<String> formats}) {
+
+  static String formatDateByStr(String datetimeStr, {List<String>? formats}) {
     return formatDate(DateTime.parse(datetimeStr), formats: formats);
   }
 
-  static String formatDate(DateTime date, {List<String> formats}) {
+  static String formatDate(DateTime date, {List<String>? formats}) {
     final sb = StringBuffer();
     if (null == formats) {
       formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss];
@@ -484,7 +482,8 @@ class TimeUtils{
       friendly = '$days天$agoOrAfter';
     } else if (seconds >= 60 * 60 * 24 * 7 && seconds < 60 * 60 * 24 * 30) {
       friendly = '$weeks周$agoOrAfter';
-    } else if (seconds >= 60 * 60 * 24 * 30 && seconds < 60 * 60 * 24 * 30 * 6) {
+    } else if (seconds >= 60 * 60 * 24 * 30 &&
+        seconds < 60 * 60 * 24 * 30 * 6) {
       friendly = '$mounts月$agoOrAfter';
     } else if (seconds >= 60 * 60 * 24 * 30 * 6 &&
         seconds < 60 * 60 * 24 * 30 * 12) {

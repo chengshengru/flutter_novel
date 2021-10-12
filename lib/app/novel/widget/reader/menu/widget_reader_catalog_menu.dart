@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_chapter.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/manager_menu_widget.dart';
-import 'package:flutter_novel/app/widget/scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class NovelCatalogMenu extends StatefulWidget {
   final NovelBookChapter bookChapter;

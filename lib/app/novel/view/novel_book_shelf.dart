@@ -9,11 +9,11 @@ import 'package:provider/provider.dart';
 
 class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
   @override
-  Widget buildView(BuildContext context, NovelBookShelfViewModel viewModel) {
-    var currentBookShelfInfo = viewModel.bookshelfInfo;
+  Widget? buildView(BuildContext context, NovelBookShelfViewModel? viewModel) {
+    var currentBookShelfInfo = viewModel?.bookshelfInfo;
 
     if (currentBookShelfInfo?.currentBookShelf == null ||
-        currentBookShelfInfo.currentBookShelf.length == 0) {
+        currentBookShelfInfo!.currentBookShelf.length == 0) {
       return Container(
         alignment: Alignment.center,
         child: InkWell(
@@ -43,8 +43,7 @@ class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
                     var currentBookShelf =
                         currentBookShelfInfo.currentBookShelf[index];
                     APPRouter.instance.route(NovelBookReaderView.buildIntent(
-                        context,
-                        currentBookShelf));
+                        context, currentBookShelf));
                   },
                 ),
               );
@@ -64,7 +63,7 @@ class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
   }
 
   @override
-  void loadData(BuildContext context, NovelBookShelfViewModel viewModel) {
+  void loadData(BuildContext context, NovelBookShelfViewModel? viewModel) {
     viewModel?.getSavedBook();
   }
 
@@ -98,13 +97,13 @@ class _NovelItemWidgetState extends State<NovelItemWidget>
           new Flexible(
             flex: 1,
             child: CachedNetworkImage(
-              imageUrl: widget.bookInfo.cover,
+              imageUrl: widget.bookInfo.cover ?? '',
               fit: BoxFit.cover,
               fadeOutDuration: new Duration(seconds: 1),
               fadeInDuration: new Duration(seconds: 1),
             ),
           ),
-          Text(widget.bookInfo.title)
+          Text(widget.bookInfo.title ?? '')
         ],
       ),
     );

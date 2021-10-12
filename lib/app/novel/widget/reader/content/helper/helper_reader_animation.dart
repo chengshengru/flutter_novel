@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 
-class ReaderAnimationHelper{
+class ReaderAnimationHelper {
+  late Offset currentTouchOffset;
 
-  Offset currentTouchOffset;
+  late BasePageAnimation animation;
 
-  BasePageAnimation animation;
+  ReaderAnimationHelper(this.currentTouchOffset, BasePageAnimation animation);
 
-  ReaderAnimationHelper(this.currentTouchOffset,BasePageAnimation animation);
-
-  Canvas draw(Canvas canvas){
+  Canvas draw(Canvas canvas) {
     return canvas;
   }
-
 }
 
-abstract class BasePageAnimation{
-
+abstract class BasePageAnimation {
   void draw(Canvas canvas);
-
 }
-

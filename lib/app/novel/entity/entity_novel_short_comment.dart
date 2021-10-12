@@ -9,7 +9,7 @@ class NovelShortComment extends Object {
   int today;
 
   @JsonKey(name: 'docs')
-  List<Docs> docs;
+  List<Docs?>? docs;
 
   @JsonKey(name: 'ok')
   bool ok;
@@ -36,10 +36,10 @@ class Docs extends Object {
   String type;
 
   @JsonKey(name: 'author')
-  Author author;
+  Author? author;
 
   @JsonKey(name: 'book')
-  Book book;
+  Book? book;
 
   @JsonKey(name: 'likeCount')
   int likeCount;

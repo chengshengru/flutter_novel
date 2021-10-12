@@ -36,7 +36,7 @@ Docs _$DocsFromJson(Map<String, dynamic> json) {
         ? null
         : Book.fromJson(json['book'] as Map<String, dynamic>),
     json['likeCount'] as int,
-    (json['priority'] as num)?.toDouble(),
+    json['priority']?.toDouble(),
     json['block'] as String,
     json['state'] as String,
     json['updated'] as String,

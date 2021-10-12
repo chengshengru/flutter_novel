@@ -13,12 +13,12 @@ class NovelSearchResultView
   NovelSearchResultView(this.searchKeyWord);
 
   static NovelSearchResultView getPageView(APPRouterRequestOption option) {
-    return NovelSearchResultView(option.params["search_key"]);
+    return NovelSearchResultView(option.params?["search_key"]);
   }
 
   @override
-  Widget buildView(BuildContext context, NovelBookSearchViewModel viewModel) {
-    NovelKeyWordSearch keyWordSearchResult =
+  Widget? buildView(BuildContext context, NovelBookSearchViewModel? viewModel) {
+    NovelKeyWordSearch? keyWordSearchResult =
         viewModel?.contentEntity?.keyWordSearchResult;
 
     return Scaffold(
@@ -36,8 +36,11 @@ class NovelSearchResultView
               itemBuilder: (context, index) {
                 return Container(
                   child: InkWell(
-                    onTap: (){
-                      APPRouter.instance.route(APPRouterRequestOption(APPRouter.ROUTER_NAME_NOVEL_INTRO,context,params: {"bookId": keyWordSearchResult?.books[index]?.id}));
+                    onTap: () {
+                      APPRouter.instance.route(APPRouterRequestOption(
+                          APPRouter.ROUTER_NAME_NOVEL_INTRO, context, params: {
+                        "bookId": keyWordSearchResult?.books![index].id
+                      }));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -46,7 +49,7 @@ class NovelSearchResultView
                           flex: 1,
                           child: CachedNetworkImage(
                             imageUrl: Uri.decodeComponent(keyWordSearchResult
-                                .books[index].cover
+                                .books![index].cover
                                 .split("/agent/")
                                 .last),
                           ),
@@ -60,7 +63,7 @@ class NovelSearchResultView
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  keyWordSearchResult.books[index].title,
+                                  keyWordSearchResult.books![index].title ?? '',
                                   style: TextStyle(
                                       fontSize: 18, color: Colors.black),
                                 ),
@@ -69,7 +72,9 @@ class NovelSearchResultView
                                   color: Colors.transparent,
                                 ),
                                 Text(
-                                  keyWordSearchResult.books[index].shortIntro,
+                                  keyWordSearchResult
+                                          .books![index].shortIntro ??
+                                      '',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.grey[600]),
                                   maxLines: 2,
@@ -86,7 +91,7 @@ class NovelSearchResultView
                                       width: 5,
                                     ),
                                     Text(
-                                      keyWordSearchResult.books[index].author,
+                                      keyWordSearchResult.books![index].author,
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.grey),
                                     )
@@ -105,7 +110,7 @@ class NovelSearchResultView
                   color: Colors.grey,
                 );
               },
-              itemCount: keyWordSearchResult.books.length);
+              itemCount: keyWordSearchResult.books!.length);
         }
       }),
     );
@@ -117,7 +122,7 @@ class NovelSearchResultView
   }
 
   @override
-  void loadData(BuildContext context, NovelBookSearchViewModel viewModel) {
-    viewModel.searchTargetKeyWord(searchKeyWord);
+  void loadData(BuildContext context, NovelBookSearchViewModel? viewModel) {
+    viewModel?.searchTargetKeyWord(searchKeyWord);
   }
 }

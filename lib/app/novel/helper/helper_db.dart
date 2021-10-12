@@ -34,8 +34,8 @@ class DBHelper extends BaseDBProvider {
   ///
   Future<bool> isExist(String bookId) async {
     if (bookId == null) return false;
-    Database db = await getDB();
-    List<Map<String, dynamic>> maps = await db
+    Database? db = await getDB();
+    List<Map<String, dynamic>> maps = await db!
         .query(TABLE_NAME, where: "$COLUMN_BOOK_ID = ?", whereArgs: [bookId]);
     return maps.isNotEmpty;
   }
@@ -43,13 +43,13 @@ class DBHelper extends BaseDBProvider {
   /// 根据[bookId]查询某书详情
   /// @return book
   ///
-  Future<NovelBookInfo> getBook(String bookId) async {
+  Future<NovelBookInfo?> getBook(String bookId) async {
     bool _isExist = await isExist(bookId);
     if (!_isExist) return null;
 
     List<NovelBookInfo> books = [];
-    Database db = await getDB();
-    List<Map<String, dynamic>> maps = await db
+    Database? db = await getDB();
+    List<Map<String, dynamic>> maps = await db!
         .query(TABLE_NAME, where: "$COLUMN_BOOK_ID = ?", whereArgs: [bookId]);
     if (maps.isNotEmpty) {
       for (Map<String, dynamic> map in maps) {
@@ -66,11 +66,11 @@ class DBHelper extends BaseDBProvider {
   /// 根据[_id]查询某书详情
   /// @return book
   ///
-  Future<NovelBookInfo> getBookById(int _id) async {
+  Future<NovelBookInfo?> getBookById(int _id) async {
     List<NovelBookInfo> books = [];
-    Database db = await getDB();
+    Database? db = await getDB();
     List<Map<String, dynamic>> maps =
-        await db.query(TABLE_NAME, where: "$COLUMN_ID = ?", whereArgs: [_id]);
+        await db!.query(TABLE_NAME, where: "$COLUMN_ID = ?", whereArgs: [_id]);
     if (maps.isNotEmpty) {
       for (Map<String, dynamic> map in maps) {
         NovelBookInfo book = NovelBookInfo.fromDBMap(map);
@@ -87,8 +87,8 @@ class DBHelper extends BaseDBProvider {
   ///
   Future<List<NovelBookInfo>> getAllBooks() async {
     List<NovelBookInfo> books = [];
-    Database db = await getDB();
-    List<Map<String, dynamic>> maps = await db.query(TABLE_NAME);
+    Database? db = await getDB();
+    List<Map<String, dynamic>> maps = await db!.query(TABLE_NAME);
     if (maps.isNotEmpty) {
       for (Map<String, dynamic> map in maps) {
         NovelBookInfo book = NovelBookInfo.fromDBMap(map);
@@ -101,30 +101,30 @@ class DBHelper extends BaseDBProvider {
   /// 添加小说[book]到书架
   /// @return _id
   ///
-  Future<int> insertOrReplaceToDB(NovelBookInfo book) async {
+  Future<int> insertOrReplaceToDB(NovelBookInfo? book) async {
     if (book == null) return -1;
-    String id = book?.bookId;
-    if (book == null || id == null) return -1;
+    String? id = book.bookId;
+    if (id == null) return -1;
     bool _isExist = await isExist(id);
     if (!_isExist) {}
-    Database db = await getDB();
+    Database? db = await getDB();
     Map<String, dynamic> map = book.toDBMap();
-    return await db.insert(TABLE_NAME, map);
+    return await db!.insert(TABLE_NAME, map);
   }
 
   /// 跟新书架上的小说信息[book]
   /// @return true or false
   ///
-  Future<bool> updateBook(NovelBookInfo book) async {
-    String id = book?.bookId;
+  Future<bool> updateBook(NovelBookInfo? book) async {
+    String? id = book?.bookId;
     if (book == null || id == null) return false;
 
     bool _isExist = await isExist(id);
     if (!_isExist) return false;
-    Database db = await getDB();
+    Database? db = await getDB();
 
     Map<String, dynamic> map = book.toDBMap();
-    int result = await db
+    int result = await db!
         .update(TABLE_NAME, map, where: "$COLUMN_BOOK_ID = ?", whereArgs: [id]);
 
     return result == 1;
@@ -136,9 +136,9 @@ class DBHelper extends BaseDBProvider {
   Future<bool> deleteBook(String bookId) async {
     bool _isExist = await isExist(bookId);
     if (!_isExist) return false;
-    Database db = await getDB();
+    Database? db = await getDB();
 
-    int result = await db
+    int result = await db!
         .delete(TABLE_NAME, where: "$COLUMN_BOOK_ID = ?", whereArgs: [bookId]);
 
     return result == 1;
@@ -148,8 +148,8 @@ class DBHelper extends BaseDBProvider {
   /// @return true or false
   ///
   Future<bool> deleteAllBook() async {
-    Database db = await getDB();
-    int result = await db.delete(TABLE_NAME);
+    Database? db = await getDB();
+    int result = await db!.delete(TABLE_NAME);
     return result == 1;
   }
 }

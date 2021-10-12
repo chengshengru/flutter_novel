@@ -24,13 +24,13 @@ class NovelSearchView extends BaseStatefulView<NovelBookSearchViewModel> {
 
 class _NovelSearchViewState
     extends BaseStatefulViewState<NovelSearchView, NovelBookSearchViewModel> {
-  StreamController inputStreamController = StreamController();
-  Observable switchObservable;
-  FocusNode _focusNode;
+  StreamController? inputStreamController = StreamController();
+  late Observable switchObservable;
+  late FocusNode _focusNode;
 
   @override
-  Widget buildView(BuildContext context, NovelBookSearchViewModel viewModel) {
-    SearchContentEntity contentEntity = viewModel.contentEntity;
+  Widget? buildView(BuildContext context, NovelBookSearchViewModel? viewModel) {
+    SearchContentEntity? contentEntity = viewModel?.contentEntity;
 
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -62,10 +62,10 @@ class _NovelSearchViewState
                       child: Padding(
                         padding: EdgeInsets.only(right: 40),
                         child: Container(
-                          height: 40,
+                            height: 40,
                             decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xFFF5F5F5)),
                             alignment: Alignment.center,
                             child: TextField(
@@ -74,7 +74,7 @@ class _NovelSearchViewState
                               textInputAction: TextInputAction.search,
                               textAlignVertical: TextAlignVertical.center,
                               onChanged: (data) {
-                                inputStreamController.sink.add(data);
+                                inputStreamController!.sink.add(data);
                               },
                               style: TextStyle(
                                   textBaseline: TextBaseline.alphabetic,
@@ -92,7 +92,7 @@ class _NovelSearchViewState
               body: Builder(builder: (context) {
                 List<Widget> stackChildren = [];
                 stackChildren
-                    .add(_SearchStackBottomWidget(contentEntity.searchHotWord));
+                    .add(_SearchStackBottomWidget(contentEntity!.searchHotWord));
                 if (contentEntity?.autoCompleteSearchWord?.length != null &&
                     contentEntity.autoCompleteSearchWord.length > 0) {
                   stackChildren.add(_SearchStackAutoCompleteWidget(
@@ -124,12 +124,12 @@ class _NovelSearchViewState
   }
 
   @override
-  void loadData(BuildContext context, NovelBookSearchViewModel viewModel) {
+  void loadData(BuildContext context, NovelBookSearchViewModel? viewModel) {
     switchObservable.listen((word) {
-      viewModel.getSearchWord(word);
+      viewModel?.getSearchWord(word);
     });
 
-    viewModel.getHotSearchWord();
+    viewModel?.getHotSearchWord();
   }
 
   @override

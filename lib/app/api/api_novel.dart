@@ -190,6 +190,6 @@ class NovelApi {
 }
 
 class BaseResponse<T> {
-  bool isSuccess;
-  T data;
+  bool isSuccess = false;
+  T? data;
 }

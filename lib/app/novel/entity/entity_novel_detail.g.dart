@@ -137,7 +137,7 @@ Map<String, dynamic> _$StarRatingsToJson(StarRatings instance) =>
 
 Rating _$RatingFromJson(Map<String, dynamic> json) {
   return Rating(
-    (json['score'] as num)?.toDouble(),
+    json['score']?.toDouble(),
     json['count'] as int,
     json['tip'] as String,
     json['isEffect'] as bool,

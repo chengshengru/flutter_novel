@@ -13,45 +13,43 @@ class NovelBookDBModel extends BaseModel {
     return _dbHelper.getAllBooks();
   }
 
-  void addBook(NovelBookInfo book){
+  void addBook(NovelBookInfo book) {
     _dbHelper.insertOrReplaceToDB(book);
-    if(!bookshelfInfo.currentBookShelf.contains(book)) {
+    if (!bookshelfInfo.currentBookShelf.contains(book)) {
       bookshelfInfo.currentBookShelf.add(book);
     }
   }
-  void removeBook(String bookId){
-    _dbHelper.deleteBook(bookId).then((isSuccess){
-      NovelBookInfo targetBook;
-      for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
-        if(bookInfo.bookId==bookId){
-          targetBook=bookInfo;
+
+  void removeBook(String bookId) {
+    _dbHelper.deleteBook(bookId).then((isSuccess) {
+      NovelBookInfo? targetBook;
+      for (NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf) {
+        if (bookInfo.bookId == bookId) {
+          targetBook = bookInfo;
           break;
         }
       }
 
-      if(targetBook!=null) {
+      if (targetBook != null) {
         bookshelfInfo.currentBookShelf.remove(targetBook);
       }
     });
   }
 
-  void updateBookInfo(NovelBookInfo book){
-    _dbHelper.updateBook(book).then((isSuccess){
-      if(isSuccess){
-        for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
-          if(bookInfo.bookId==book.bookId){
-            bookInfo=book;
+  void updateBookInfo(NovelBookInfo book) {
+    _dbHelper.updateBook(book).then((isSuccess) {
+      if (isSuccess) {
+        for (NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf) {
+          if (bookInfo.bookId == book.bookId) {
+            bookInfo = book;
             break;
           }
         }
       }
     });
-
   }
 
-  void getBookInfo() {
-
-  }
+  void getBookInfo() {}
 }
 
 class NovelBookShelfInfo {

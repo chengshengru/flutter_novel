@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
+import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
 import 'package:flutter_novel/app/novel/widget/reader/cache/novel_config_manager.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_reader_page.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/widget_reader_content.dart';
@@ -8,7 +9,6 @@ import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_bottom_
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_catalog_menu.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_setting_menu.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_top_menu.dart';
-import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_config.dart';
 import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
@@ -31,7 +31,7 @@ class NovelBookReaderView extends BaseStatefulView<NovelReaderViewModel> {
   }
 
   static NovelBookReaderView getPageView(APPRouterRequestOption option) {
-    return NovelBookReaderView(option.params["bookInfo"]);
+    return NovelBookReaderView(option.params?["bookInfo"]);
   }
 
   @override
@@ -47,15 +47,15 @@ class _NovelReaderPageState
   GlobalKey readerKey = new GlobalKey();
   GlobalKey bottomMenuKey = new GlobalKey();
 
-  ReaderConfigEntity configData;
-  NovelConfigManager _configManager;
+  late ReaderConfigEntity configData;
+  late NovelConfigManager _configManager;
 
-  AnimationController _controller;
+  late AnimationController _controller;
   bool _isMenuOpen = false;
 
   NovelMenuState currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
 
-  PublishSubject<NovelMenuState> _menuStreamSubject;
+  late PublishSubject<NovelMenuState> _menuStreamSubject;
 
   _NovelReaderPageState();
 
@@ -75,25 +75,25 @@ class _NovelReaderPageState
   }
 
   @override
-  void loadData(BuildContext context, NovelReaderViewModel viewModel) {
+  void loadData(BuildContext context, NovelReaderViewModel? viewModel) {
 //    print("ScreenHeight:"+MediaQuery.of(context).size.height.toString());
 //    print("ScreenWidth:"+MediaQuery.of(context).size.width.toString());
     configData
       ..currentPageIndex = widget.bookInfo.currentPageIndex
       ..currentChapterIndex = widget.bookInfo.currentChapterIndex
-      ..novelId = widget.bookInfo.bookId
+      ..novelId = widget.bookInfo!.bookId!
       ..pageSize =
           Offset(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight());
 
-    viewModel.setCurrentConfig(configData);
+    viewModel?.setCurrentConfig(configData);
 
-    viewModel.requestCatalog(widget.bookInfo.bookId);
+    viewModel?.requestCatalog(widget.bookInfo.bookId!);
   }
 
   @override
-  Widget buildView(BuildContext context, NovelReaderViewModel viewModel) {
-
-    viewModel.setPageSize(Offset(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
+  Widget? buildView(BuildContext context, NovelReaderViewModel? viewModel) {
+    viewModel!.setPageSize(Offset(
+        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
 
     return Scaffold(
       body: SafeArea(
@@ -183,7 +183,7 @@ class _NovelReaderPageState
       this.configData..currentCanvasBgColor = Color(0xfffff2cc);
     }
 
-    viewModel.setCurrentConfig(configData);
+    viewModel?.setCurrentConfig(configData);
   }
 
   void setConfig(ReaderConfigEntity data) {
@@ -194,7 +194,7 @@ class _NovelReaderPageState
     });
   }
 
-  void toggleMenu(Function finishCallback) {
+  void toggleMenu(Function? finishCallback) {
     if (!_isMenuOpen) {
       _controller.forward(from: 0).then((finish) {
         if (finishCallback != null) {
@@ -209,12 +209,12 @@ class _NovelReaderPageState
       });
     }
     _isMenuOpen = !_isMenuOpen;
-    viewModel.setMenuOpenState(_isMenuOpen);
+    viewModel?.setMenuOpenState(_isMenuOpen);
   }
 
   void refreshReader() {
 //    viewModel.notifyRefresh();
-    readerKey.currentContext.findRenderObject().markNeedsPaint();
+    readerKey.currentContext?.findRenderObject()?.markNeedsPaint();
   }
 
   Widget getBottomSettingMenu(NovelReaderViewModel viewModel) {

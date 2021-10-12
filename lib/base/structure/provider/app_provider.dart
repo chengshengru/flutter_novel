@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/structure/provider/state_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 import 'base_provider.dart';
 
 class APPInfoProvider with ChangeNotifier {
-
   List<BaseProvider> _currentProviders = [PageStateProvider()];
 
   static APPInfoProvider get instance => _getInstance();
@@ -35,8 +35,8 @@ class APPInfoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<SingleChildCloneableWidget> getProvidersList(BuildContext context) {
-    List<SingleChildCloneableWidget> providers = [];
+  List<SingleChildWidget> getProvidersList(BuildContext context) {
+    List<SingleChildWidget> providers = [];
 
     for (BaseProvider currentProvider in _currentProviders) {
       providers.add(currentProvider.getProviderContainer());

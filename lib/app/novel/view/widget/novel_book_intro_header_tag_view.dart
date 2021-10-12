@@ -50,7 +50,7 @@ class NovelBookIntroHeaderTagView extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  '[${detailInfo != null ? (detailInfo.isSerial ? "更新:${TimeUtils.friendlyDateTime(detailInfo?.updated)}" : "完结") : ""}]\t${detailInfo?.lastChapter}',
+                  '[${detailInfo != null ? (detailInfo.isSerial ? "更新:${TimeUtils.friendlyDateTime(detailInfo!.updated)}" : "完结") : ""}]\t${detailInfo?.lastChapter}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -61,10 +61,10 @@ class NovelBookIntroHeaderTagView extends StatelessWidget {
         ], crossAxisAlignment: CrossAxisAlignment.start));
   }
 
-  List<Widget> tags(NovelDetailInfo detailInfo) {
+  List<Widget> tags(NovelDetailInfo? detailInfo) {
     List<Widget> widgets = [];
     if (detailInfo != null) {
-      detailInfo.tags.forEach(
+      detailInfo.tags!.forEach(
         (tag) => widgets.add(
           TagView(
             tag: tag,
