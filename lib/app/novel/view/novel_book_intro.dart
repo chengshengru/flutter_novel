@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
-import 'package:flutter/material.dart' hide NestedScrollView;
+import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
@@ -53,7 +52,7 @@ class _NovelBookIntroViewState
     if ((bgEndColor == null || bgEndColor == null) &&
         detailInfo?.cover != null) {
       initPageTopColor(
-              Uri.decodeComponent(detailInfo!.cover!.split("/agent/").last))
+              Uri.decodeComponent(detailInfo!.cover.split("/agent/").last))
           .then((data) {
         setState(() {
           bgStartColor = data?.lightVibrantColor?.color ?? Colors.white;
@@ -63,10 +62,12 @@ class _NovelBookIntroViewState
       });
     }
 
+    //pinnedHeaderSliverHeightBuilder: () {
+    //         return pinnedHeaderHeight;
+    //       },
+
     return Scaffold(
-      body: NestedScrollView(pinnedHeaderSliverHeightBuilder: () {
-        return pinnedHeaderHeight;
-      }, headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+      body: NestedScrollView(headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
         return _headerSliverBuilder(context, detailInfo);
       }, body: Builder(builder: (context) {
         return Container(
@@ -80,13 +81,10 @@ class _NovelBookIntroViewState
                     switch (index) {
                       case 0:
                         return NovelIntroShortCommentView(commentInfo);
-                        break;
                       case 1:
                         return NovelIntroBookReviewView(bookReview);
-                        break;
                       case 2:
                         return NovelIntroBookRecommendView(bookRecommend);
-                        break;
                       case 3:
                         return Container(
                             color: Colors.white,

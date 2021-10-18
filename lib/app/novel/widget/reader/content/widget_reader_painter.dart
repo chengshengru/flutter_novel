@@ -5,7 +5,7 @@ import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_rea
 
 class NovelPagePainter extends CustomPainter {
   ReaderPageManager pageManager;
-  late TouchEvent currentTouchData;
+  TouchEvent? currentTouchData;
   late int currentPageIndex;
   late int currentChapterId;
 
@@ -13,7 +13,7 @@ class NovelPagePainter extends CustomPainter {
 
   void setCurrentTouchEvent(TouchEvent event) {
     currentTouchData = event;
-    pageManager.setCurrentTouchEvent(currentTouchData);
+    pageManager.setCurrentTouchEvent(currentTouchData!);
   }
 
   @override

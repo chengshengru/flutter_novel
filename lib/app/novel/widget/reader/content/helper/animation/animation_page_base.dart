@@ -54,13 +54,13 @@ abstract class BaseAnimationPage {
 
   bool isConfirmArea();
 
-  Animation<Offset> getCancelAnimation(
+  Animation<Offset>? getCancelAnimation(
       AnimationController controller, GlobalKey canvasKey);
 
-  Animation<Offset> getConfirmAnimation(
+  Animation<Offset>? getConfirmAnimation(
       AnimationController controller, GlobalKey canvasKey);
 
-  Simulation getFlingAnimationSimulation(
+  Simulation? getFlingAnimationSimulation(
       AnimationController controller, DragEndDetails details);
 }
 

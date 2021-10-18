@@ -12,7 +12,7 @@ import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart'
 ///
 /// 结论：自己算个毛，交给模拟器实现去……
 class SlidePageAnimation extends BaseAnimationPage {
-  ClampingScrollPhysics physics;
+  late ClampingScrollPhysics physics;
 
   Offset mStartPoint = Offset(0, 0);
   double mStartDy = 0;
@@ -27,10 +27,10 @@ class SlidePageAnimation extends BaseAnimationPage {
   /// 翻到下一页
   bool isTurnToNext = true;
 
-  AnimationController _currentAnimationController;
+  late AnimationController _currentAnimationController;
 
-  Tween<Offset> currentAnimationTween;
-  Animation<Offset> currentAnimation;
+  late Tween<Offset> currentAnimationTween;
+  Animation<Offset>? currentAnimation;
 
   SlidePageAnimation() : super() {
     physics = ClampingScrollPhysics();
@@ -39,7 +39,7 @@ class SlidePageAnimation extends BaseAnimationPage {
   @override
   void setContentViewModel(NovelReaderViewModel viewModel) {
     super.setContentViewModel(viewModel);
-    viewModel.registerContentOperateCallback((operate){
+    viewModel.registerContentOperateCallback((operate) {
       mStartPoint = Offset(0, 0);
       mStartDy = 0;
       dy = 0;
@@ -49,13 +49,13 @@ class SlidePageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Animation<Offset> getCancelAnimation(
+  Animation<Offset>? getCancelAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     return null;
   }
 
   @override
-  Animation<Offset> getConfirmAnimation(
+  Animation<Offset>? getConfirmAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     return null;
   }
@@ -87,7 +87,7 @@ class SlidePageAnimation extends BaseAnimationPage {
     switch (event.action) {
       case TouchEvent.ACTION_DOWN:
         if (!dy.isNaN && !dy.isInfinite) {
-          mStartPoint = event.touchPos;
+          mStartPoint = event.touchPos!;
           mStartDy = currentMoveDy;
           dy = 0;
         }
@@ -95,14 +95,14 @@ class SlidePageAnimation extends BaseAnimationPage {
         break;
       case TouchEvent.ACTION_MOVE:
         if (!mTouch.dy.isInfinite && !mStartPoint.dy.isInfinite) {
-          double tempDy = event.touchPos.dy - mStartPoint.dy;
+          double tempDy = event.touchPos!.dy - mStartPoint.dy;
           if (!currentSize.height.isInfinite &&
               currentSize.height != 0 &&
               currentSize.height != null &&
               !dy.isInfinite &&
               !currentMoveDy.isInfinite) {
             int currentIndex = (tempDy + mStartDy) ~/ currentSize.height;
-
+            print(currentIndex);
             if (lastIndex != currentIndex) {
               if (currentIndex < lastIndex) {
                 if (isCanGoNext()) {
@@ -119,7 +119,7 @@ class SlidePageAnimation extends BaseAnimationPage {
               }
             }
 
-            mTouch = event.touchPos;
+            mTouch = event.touchPos!;
             dy = mTouch.dy - mStartPoint.dy;
             isTurnToNext = mTouch.dy - mStartPoint.dy < 0;
             lastIndex = currentIndex;
@@ -151,7 +151,7 @@ class SlidePageAnimation extends BaseAnimationPage {
     if (actualOffset < 0) {
       if (readerViewModel.getNextPage()?.pagePicture != null) {
         canvas.translate(0, actualOffset + currentSize.height);
-        canvas.drawPicture(readerViewModel.getNextPage().pagePicture);
+        canvas.drawPicture(readerViewModel.getNextPage()!.pagePicture!);
       } else {
         if (!isCanGoNext()) {
           dy = 0;
@@ -167,7 +167,7 @@ class SlidePageAnimation extends BaseAnimationPage {
     } else if (actualOffset > 0) {
       if (readerViewModel.getPrePage()?.pagePicture != null) {
         canvas.translate(0, actualOffset - currentSize.height);
-        canvas.drawPicture(readerViewModel.getPrePage().pagePicture);
+        canvas.drawPicture(readerViewModel.getPrePage()!.pagePicture!);
       } else {
         if (!isCanGoPre()) {
           dy = 0;
@@ -186,9 +186,9 @@ class SlidePageAnimation extends BaseAnimationPage {
     canvas.restore();
     canvas.save();
 
-    if (readerViewModel.getCurrentPage().pagePicture != null) {
+    if (readerViewModel.getCurrentPage()!.pagePicture != null) {
       canvas.translate(0, actualOffset);
-      canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+      canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
     }
 
     canvas.restore();
@@ -198,11 +198,11 @@ class SlidePageAnimation extends BaseAnimationPage {
 
   @override
   bool isCancelArea() {
-    return null;
+    return false;
   }
 
   @override
   bool isConfirmArea() {
-    return null;
+    return false;
   }
 }

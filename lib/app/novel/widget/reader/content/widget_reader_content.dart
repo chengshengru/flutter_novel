@@ -53,7 +53,7 @@ class _NovelPageReaderState
       child: Builder(builder: (context) {
         if (viewModel?.getCurrentPage()?.pagePicture == null) {
           if (viewModel?.getCurrentContentDataValue()?.contentState == null ||
-              viewModel?.getCurrentContentDataValue().contentState ==
+              viewModel?.getCurrentContentDataValue()!.contentState ==
                   ContentState.STATE_NORMAL) {
             return NovelReaderLoadingPageWidget(
                 viewModel?.getCurrentContentDataValue());

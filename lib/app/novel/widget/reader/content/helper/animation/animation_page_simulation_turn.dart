@@ -20,7 +20,7 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   double mCornerX = 1; // 拖拽点对应的页脚
   double mCornerY = 1;
 
-  bool mIsRTandLB; // 是否属于右上左下
+  late bool mIsRTandLB; // 是否属于右上左下
 
   Offset mBezierStart1 = new Offset(0, 0); // 贝塞尔曲线起始点
   Offset mBezierControl1 = new Offset(0, 0); // 贝塞尔曲线控制点
@@ -32,22 +32,22 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   Offset mBezierVertex2 = new Offset(0, 0);
   Offset mBezierEnd2 = new Offset(0, 0);
 
-  double mMiddleX;
-  double mMiddleY;
-  double mDegrees;
-  double mTouchToCornerDis;
+  late double mMiddleX;
+  late double mMiddleY;
+  late double mDegrees;
+  late double mTouchToCornerDis;
 
-  double mMaxLength;
+  late double mMaxLength;
 
   TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
   bool isTurnToNext = false;
-  bool isConfirmAnimation=false;
+  bool isConfirmAnimation = false;
 
-  Tween<Offset> currentAnimationTween;
-  Animation<Offset> currentAnimation;
+  late Tween<Offset> currentAnimationTween;
+  Animation<Offset>? currentAnimation;
 
-  AnimationStatusListener statusListener;
+  AnimationStatusListener? statusListener;
 
   void calBezierPoint() {
     mMiddleX = (mTouch.dx + mCornerX) / 2;
@@ -182,7 +182,7 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   @override
   void onTouchEvent(TouchEvent event) {
     if (event.touchPos != null) {
-      mTouch = event.touchPos;
+      mTouch = event.touchPos!;
     }
 
     switch (event.action) {
@@ -217,8 +217,8 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
       drawBottomPageCanvas(canvas);
       drawTopPageBackArea(canvas);
     } else {
-      var targetPicture=readerViewModel?.getCurrentPage()?.pagePicture;
-      if(targetPicture!=null) {
+      var targetPicture = readerViewModel?.getCurrentPage()?.pagePicture;
+      if (targetPicture != null) {
         canvas.drawPicture(targetPicture);
       }
     }
@@ -261,7 +261,7 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
 //        Offset.zero & currentSize,
 //        Offset.zero & currentSize,
 //        Paint()..isAntiAlias = true);
-    canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+    canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
 
     drawTopPageShadow(canvas);
 
@@ -342,7 +342,9 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
 //        Paint()
 //          ..isAntiAlias = true
 //          ..blendMode = BlendMode.srcATop);
-    canvas.drawPicture(isTurnToNext?readerViewModel.getNextPage().pagePicture:readerViewModel.getPrePage().pagePicture);
+    canvas.drawPicture(isTurnToNext
+        ? readerViewModel.getNextPage()!.pagePicture!
+        : readerViewModel.getPrePage()!.pagePicture!);
 //
     drawBottomPageShadow(canvas);
 
@@ -471,7 +473,7 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
     /// 反正是一个半透明处理的，所以对清晰度没要求，所以这里用image绘制
     /// 我个人的猜测……求精通底层的大佬解惑
     canvas.drawImageRect(
-        readerViewModel.getCurrentPage().pageImage,
+        readerViewModel.getCurrentPage()!.pageImage!,
         Offset.zero & currentSize,
         Offset.zero & currentSize,
         Paint()..isAntiAlias = true);
@@ -479,7 +481,8 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
 //    canvas.drawPicture(configManager.currentPagePicture);
 //    canvas.drawPaint(Paint()..color = Color(0xCCFFFFFF));
 //    canvas.drawPaint(Paint()..color =Colors.blue);
-    canvas.drawPaint(Paint()..color = Color(readerViewModel.bgPaint.color.value& 0xAAFFFFFF));
+    canvas.drawPaint(Paint()
+      ..color = Color(readerViewModel.bgPaint.color.value & 0xAAFFFFFF));
 //    canvas.drawPaint(Paint()..color = Color(0xAAfff2cc));
 
     canvas.restore();
@@ -531,12 +534,12 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Animation<Offset> getCancelAnimation(
+  Animation<Offset>? getCancelAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     if ((!isTurnToNext && !isCanGoPre()) || (isTurnToNext && !isCanGoNext())) {
       return null;
     }
-    isConfirmAnimation=false;
+    isConfirmAnimation = false;
 
     if (currentAnimation == null) {
       currentAnimationTween = Tween(begin: Offset.zero, end: Offset.zero);
@@ -551,31 +554,31 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Animation<Offset> getConfirmAnimation(
+  Animation<Offset>? getConfirmAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     if ((!isTurnToNext && !isCanGoPre()) || (isTurnToNext && !isCanGoNext())) {
       return null;
     }
-    isConfirmAnimation=true;
+    isConfirmAnimation = true;
 
     if (currentAnimation == null) {
       currentAnimationTween = Tween(begin: Offset.zero, end: Offset.zero);
       currentAnimation = currentAnimationTween.animate(controller);
     }
 
-    if(statusListener==null){
-      statusListener=(status) {
+    if (statusListener == null) {
+      statusListener = (status) {
         switch (status) {
           case AnimationStatus.dismissed:
             break;
           case AnimationStatus.completed:
-            if(isConfirmAnimation){
+            if (isConfirmAnimation) {
               if (isTurnToNext) {
                 readerViewModel.nextPage();
               } else {
                 readerViewModel.prePage();
               }
-              canvasKey.currentContext.findRenderObject().markNeedsPaint();
+              canvasKey.currentContext?.findRenderObject()?.markNeedsPaint();
             }
             break;
           case AnimationStatus.forward:
@@ -584,11 +587,14 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
         }
       };
 
-      currentAnimation.addStatusListener(statusListener);
+      currentAnimation!.addStatusListener(statusListener!);
     }
 
-    if(statusListener!=null&&!(controller as AnimationControllerWithListenerNumber).statusListeners.contains(statusListener)){
-      currentAnimation.addStatusListener(statusListener);
+    if (statusListener != null &&
+        !(controller as AnimationControllerWithListenerNumber)
+            .statusListeners
+            .contains(statusListener)) {
+      currentAnimation!.addStatusListener(statusListener!);
     }
 
     currentAnimationTween.begin = mTouch;
@@ -603,19 +609,22 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Simulation getFlingAnimationSimulation(
+  Simulation? getFlingAnimationSimulation(
       AnimationController controller, DragEndDetails details) {
     return null;
   }
 
   @override
   bool isCancelArea() {
-
-    return isTurnToNext?(mTouch.dx).abs() > (currentSize.width / 4*3):(mTouch.dx).abs() < (currentSize.width / 4);
+    return isTurnToNext
+        ? (mTouch.dx).abs() > (currentSize.width / 4 * 3)
+        : (mTouch.dx).abs() < (currentSize.width / 4);
   }
 
   @override
   bool isConfirmArea() {
-    return isTurnToNext?(mTouch.dx).abs() < (currentSize.width / 4*3):(mTouch.dx).abs() > (currentSize.width / 4);
+    return isTurnToNext
+        ? (mTouch.dx).abs() < (currentSize.width / 4 * 3)
+        : (mTouch.dx).abs() > (currentSize.width / 4);
   }
 }

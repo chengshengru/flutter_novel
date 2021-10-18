@@ -16,10 +16,10 @@ class ReaderPageManager {
   static const TYPE_ANIMATION_SLIDE_TURN = 3;
 
   late BaseAnimationPage currentAnimationPage;
-  late TouchEvent currentTouchData;
+  TouchEvent? currentTouchData;
   int currentAnimationType = 0;
 
-  late STATE currentState;
+  late STATE currentState = STATE.STATE_IDE;
 
   late GlobalKey canvasKey;
 
@@ -59,8 +59,7 @@ class ReaderPageManager {
       }
     } else {
       currentTouchData = event;
-
-      currentAnimationPage.onTouchEvent(currentTouchData);
+      currentAnimationPage.onTouchEvent(currentTouchData!);
     }
   }
 
@@ -102,7 +101,7 @@ class ReaderPageManager {
   }
 
   void startConfirmAnimation() {
-    Animation<Offset> animation = currentAnimationPage.getConfirmAnimation(
+    Animation<Offset>? animation = currentAnimationPage.getConfirmAnimation(
         animationController, canvasKey);
 
     if (animation == null) {
@@ -114,7 +113,7 @@ class ReaderPageManager {
   }
 
   void startCancelAnimation() {
-    Animation<Offset> animation =
+    Animation<Offset>? animation =
         currentAnimationPage.getCancelAnimation(animationController, canvasKey);
 
     if (animation == null) {
@@ -161,7 +160,7 @@ class ReaderPageManager {
   }
 
   void startFlingAnimation(DragEndDetails details) {
-    Simulation simulation = currentAnimationPage.getFlingAnimationSimulation(
+    Simulation? simulation = currentAnimationPage.getFlingAnimationSimulation(
         animationController, details);
 
     if (simulation == null) {

@@ -113,23 +113,27 @@ class ReaderContentProvider {
     return pageConfigList;
   }
 
-  static ui.Picture getNextPicture(
+  static ui.Picture? getNextPicture(
       HashMap<int, ReaderContentCanvasDataValue> currentChapterCanvasMap,
       HashMap<int, ReaderContentCanvasDataValue> nextChapterCanvasMap,
-      int ind) {}
+      int ind) {
+    return null;
+  }
 
-  static ui.Picture goPreChapter() {}
+  static ui.Picture? goPreChapter() {
+    return null;
+  }
 }
 
 class ReaderChapterPageContentConfig {
-  int currentContentFontSize;
-  int currentContentLineHeight;
-  int currentContentParagraphSpacing;
+  int currentContentFontSize = 0;
+  int currentContentLineHeight = 0;
+  int currentContentParagraphSpacing = 0;
 
-  int currentPageIndex;
-  int currentChapterId;
+  int currentPageIndex = -1;
+  int currentChapterId = 0;
 
-  List<String> paragraphContents;
+  List<String> paragraphContents = [];
 
   @override
   bool operator ==(Object other) =>
@@ -173,7 +177,10 @@ class ReaderChapterPageContentConfig {
         map['currentContentParagraphSpacing'];
     chapterConfig.currentPageIndex = map['currentPageIndex'];
     chapterConfig.currentChapterId = map['currentChapterId'];
-    chapterConfig.paragraphContents = map['paragraphConfigs'];
+    if (map['paragraphConfigs'] != null) {
+      print(map['paragraphConfigs']);
+    }
+    chapterConfig.paragraphContents = ((map['paragraphConfigs']??[])as List).map((e) => e as String).toList();
     return chapterConfig;
   }
 }
@@ -191,11 +198,11 @@ class ReaderContentDataValue {
 
   ContentState contentState = ContentState.STATE_NORMAL;
 
-  bool isSameChapter(ReaderContentDataValue target) {
+  bool isSameChapter(ReaderContentDataValue? target) {
     return target?.chapterIndex != null &&
-        target.chapterIndex == this.chapterIndex &&
+        target?.chapterIndex == this.chapterIndex &&
         target?.novelId != null &&
-        target.novelId == this.novelId;
+        target?.novelId == this.novelId;
   }
 
   void clearCalculateResult() {
@@ -228,8 +235,8 @@ class ReaderContentDataValue {
 class ReaderContentCanvasDataValue {
   late int pageIndex;
 
-  late ui.Picture pagePicture;
-  late ui.Image pageImage;
+  late ui.Picture? pagePicture;
+  late ui.Image? pageImage;
 }
 
 class ReaderParseContentDataValue {

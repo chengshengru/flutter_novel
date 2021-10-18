@@ -12,19 +12,19 @@ class CoverPageAnimation extends BaseAnimationPage {
   bool isTurnNext = true;
   bool isStartAnimation = false;
 
-  int coverDirection = ORIENTATION_VERTICAL;
+  int coverDirection = ORIENTATION_HORIZONTAL;
 
   Offset mStartPoint = Offset(0, 0);
 
   late Tween<Offset> currentAnimationTween;
-  late Animation<Offset> currentAnimation;
+  Animation<Offset>? currentAnimation;
 
   late ANIMATION_TYPE animationType;
 
-  late AnimationStatusListener statusListener;
+  AnimationStatusListener? statusListener;
 
   @override
-  Animation<Offset> getCancelAnimation(
+  Animation<Offset>? getCancelAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     if ((!isTurnNext && !isCanGoPre()) || (isTurnNext && !isCanGoNext())) {
       return null;
@@ -47,7 +47,7 @@ class CoverPageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Animation<Offset> getConfirmAnimation(
+  Animation<Offset>? getConfirmAnimation(
       AnimationController controller, GlobalKey canvasKey) {
     if ((!isTurnNext && !isCanGoPre()) || (isTurnNext && !isCanGoNext())) {
       return null;
@@ -79,14 +79,14 @@ class CoverPageAnimation extends BaseAnimationPage {
             break;
         }
       };
-      currentAnimation.addStatusListener(statusListener);
+      currentAnimation?.addStatusListener(statusListener!);
     }
 
     if (statusListener != null &&
         !(controller as AnimationControllerWithListenerNumber)
             .statusListeners
             .contains(statusListener)) {
-      currentAnimation.addStatusListener(statusListener);
+      currentAnimation?.addStatusListener(statusListener!);
     }
 
     currentAnimationTween.begin = (coverDirection == ORIENTATION_HORIZONTAL)
@@ -151,15 +151,15 @@ class CoverPageAnimation extends BaseAnimationPage {
   }
 
   void drawStatic(Canvas canvas) {
-    canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+    canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
   }
 
   void drawBottomPage(Canvas canvas) {
     canvas.save();
     if (isTurnNext) {
-      canvas.drawPicture(readerViewModel.getNextPage().pagePicture);
+      canvas.drawPicture(readerViewModel.getNextPage()!.pagePicture!);
     } else {
-      canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+      canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
     }
     canvas.restore();
   }
@@ -169,18 +169,18 @@ class CoverPageAnimation extends BaseAnimationPage {
     if (coverDirection == ORIENTATION_HORIZONTAL) {
       if (isTurnNext) {
         canvas.translate(mTouch.dx - mStartPoint.dx, 0);
-        canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+        canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
       } else {
         canvas.translate((mTouch.dx - mStartPoint.dx) - currentSize.width, 0);
-        canvas.drawPicture(readerViewModel.getPrePage().pagePicture);
+        canvas.drawPicture(readerViewModel.getPrePage()!.pagePicture!);
       }
     } else {
       if (isTurnNext) {
         canvas.translate(0, mTouch.dy - mStartPoint.dy);
-        canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+        canvas.drawPicture(readerViewModel.getCurrentPage()!.pagePicture!);
       } else {
         canvas.translate(0, (mTouch.dy - mStartPoint.dy) - currentSize.height);
-        canvas.drawPicture(readerViewModel.getPrePage().pagePicture);
+        canvas.drawPicture(readerViewModel.getPrePage()!.pagePicture!);
       }
     }
     canvas.restore();
@@ -256,7 +256,7 @@ class CoverPageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Simulation getFlingAnimationSimulation(
+  Simulation? getFlingAnimationSimulation(
       AnimationController controller, DragEndDetails details) {
     return null;
   }

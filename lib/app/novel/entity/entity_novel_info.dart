@@ -7,7 +7,9 @@ class NovelBookInfo {
   String? cover;
   String? title;
 
+  /// 当前页
   int currentPageIndex = 0;
+  /// 当前章节
   int currentChapterIndex = 0;
   int currentVolumeIndex = 0;
 

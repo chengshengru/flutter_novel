@@ -17,7 +17,7 @@ class NovelCatalogMenu extends StatefulWidget {
 }
 
 class _NovelCatalogMenuState extends State<NovelCatalogMenu> {
-  ItemScrollController primaryISC;
+  late ItemScrollController primaryISC;
 
   @override
   void initState() {
@@ -34,19 +34,20 @@ class _NovelCatalogMenuState extends State<NovelCatalogMenu> {
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
+                print(widget?.bookChapter?.chapters![index].title??'');
                 widget._menuItemClickedCallback(
                     MenuOperateEnum.OPERATE_SELECT_CHAPTER, index);
               },
               child: Container(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  widget?.bookChapter?.chapters[index].title,
+                  widget?.bookChapter?.chapters![index].title??'',
                   style: TextStyle(fontSize: 20, height: 1.5,color: Colors.white),
                 ),
               ),
             );
           },
-          itemCount: widget?.bookChapter?.chapters?.length,
+          itemCount: widget?.bookChapter?.chapters?.length??0,
           itemScrollController: primaryISC,
           initialScrollIndex: widget.currentChapterIndex,
         ),

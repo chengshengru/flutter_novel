@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/helper_reader_content.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/manager_menu_widget.dart';
 
-
-
 class NovelBottomMenu extends StatefulWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
   final OnMenuItemClicked _menuItemClickedCallback;
 
   NovelBottomMenu(this.dataValue, this._menuItemClickedCallback, Key key)
@@ -16,8 +14,8 @@ class NovelBottomMenu extends StatefulWidget {
 }
 
 class _NovelBottomMenuState extends State<NovelBottomMenu> {
-  double _currentPageIndex;
-  double _chapterLength;
+  late double _currentPageIndex;
+  late double _chapterLength;
 
   @override
   void initState() {
@@ -28,9 +26,9 @@ class _NovelBottomMenuState extends State<NovelBottomMenu> {
   void didUpdateWidget(NovelBottomMenu oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    _currentPageIndex = widget?.dataValue?.currentPageIndex?.toDouble();
+    _currentPageIndex = widget?.dataValue?.currentPageIndex?.toDouble() ?? 0;
     _chapterLength =
-        widget?.dataValue?.chapterContentConfigs?.length?.toDouble();
+        widget?.dataValue?.chapterContentConfigs?.length?.toDouble() ?? 0;
 
     _currentPageIndex ??= 0;
     _chapterLength ??= 0;
@@ -57,7 +55,7 @@ class _NovelBottomMenuState extends State<NovelBottomMenu> {
 }
 
 class NovelBottomMenuChapterControllerWidget extends StatefulWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
   final OnMenuItemClicked _menuItemClickedCallback;
 
   NovelBottomMenuChapterControllerWidget(
@@ -70,18 +68,17 @@ class NovelBottomMenuChapterControllerWidget extends StatefulWidget {
 
 class _NovelBottomMenuChapterControllerState
     extends State<NovelBottomMenuChapterControllerWidget> {
-  double _currentPageIndex;
-  double _chapterLength;
+  double _currentPageIndex = 0;
+  double _chapterLength = 0;
 
   @override
   void didUpdateWidget(NovelBottomMenuChapterControllerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _currentPageIndex = widget?.dataValue?.currentPageIndex?.toDouble();
-    _chapterLength =
-        widget?.dataValue?.chapterContentConfigs?.length?.toDouble();
+    _currentPageIndex = (widget?.dataValue?.currentPageIndex?.toDouble()) ?? 0;
+    _chapterLength =(widget?.dataValue?.chapterContentConfigs?.length?.toDouble() )?? 0;
 
-    _currentPageIndex ??= 0;
-    _chapterLength ??= 0;
+    // _currentPageIndex ??= 0;
+    // _chapterLength ??= 0;
   }
 
   @override
@@ -110,22 +107,23 @@ class _NovelBottomMenuChapterControllerState
             flex: 1,
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Builder(builder: (context){
-                if(_chapterLength==null||_chapterLength==0||_currentPageIndex==null){
+              child: Builder(builder: (context) {
+                if (_chapterLength == null ||
+                    _chapterLength == 0 ||
+                    _currentPageIndex == null) {
                   return Container();
-                }else{
+                } else {
                   return Slider(
                     value: _currentPageIndex,
                     min: 0,
-                    max: (_chapterLength==null?0:_chapterLength) - 1 < 0 ? 1 : _chapterLength - 1,
-                    divisions: (_chapterLength?.toInt()==null?0:_chapterLength?.toInt()) - 1 <= 0
-                        ? 1
-                        : _chapterLength.toInt() - 1,
+                    max:  _chapterLength - 1 < 0 ? 1: _chapterLength - 1,
+                    divisions:  _chapterLength.toInt() - 1 <= 0 ? 1 : _chapterLength.toInt() - 1,
                     onChanged: (value) {
                       setState(() {
                         _currentPageIndex = value;
                         widget._menuItemClickedCallback(
-                            MenuOperateEnum.OPERATE_JUMP_CHAPTER, value.toInt());
+                            MenuOperateEnum.OPERATE_JUMP_CHAPTER,
+                            value.toInt());
                       });
                     },
                   );

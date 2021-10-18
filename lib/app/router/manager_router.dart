@@ -16,9 +16,9 @@ class APPRouter extends BaseRouterManager {
       "app://novel/leader_board";
 
 // 工厂模式 : 单例公开访问点
-  factory APPRouter() => instance;
+  factory APPRouter() => _instance;
 
-  static APPRouter get instance => instance;
+  static APPRouter get instance => _instance;
 
   // 静态私有成员，没有初始化
   static final APPRouter _instance = APPRouter._internal();

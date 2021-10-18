@@ -354,7 +354,7 @@ class _NovelReaderPageState
           delegate: NovelMenuLayoutDelegate(
               _controller.value, MenuDirection.DIRECTION_LEFT),
           child: NovelCatalogMenu(viewModel.getCatalog(),
-              viewModel.getCurrentContentDataValue().chapterIndex,
+              viewModel.getCurrentContentDataValue()!.chapterIndex,
               (type, data) {
             switch (type) {
               case MenuOperateEnum.OPERATE_SELECT_CHAPTER:
@@ -412,10 +412,8 @@ class _NovelReaderPageState
             switch (snapshot.data) {
               case NovelMenuState.STATE_SHOW_NORMAL:
                 return getTopNormalMenu(viewModel);
-                break;
               default:
                 return Container();
-                break;
             }
           } else {
             return getTopNormalMenu(viewModel);
@@ -443,8 +441,8 @@ class _NovelReaderPageState
 
   @override
   NovelReaderViewModel buildViewModel(BuildContext context) {
-    return NovelReaderViewModel(widget.bookInfo, Provider.of(context),
-        Provider.of(context), Provider.of(context));
+    return NovelReaderViewModel(
+        widget.bookInfo, Provider.of(context), Provider.of(context));
   }
 }
 

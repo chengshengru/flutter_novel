@@ -1,48 +1,46 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
-import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
-import 'package:html/parser.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_chapter.dart';
-import 'package:flutter_novel/app/novel/model/model_novel_cache.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
+import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/helper_reader_content.dart';
 import 'package:flutter_novel/app/novel/widget/reader/manager/manager_reader_progress.dart';
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_config.dart';
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_content.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
+import 'package:html/parser.dart';
 import 'package:provider/single_child_widget.dart';
 
 typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
 typedef void OnContentChanged(ReaderOperateEnum currentContentOperate);
 
 class NovelReaderViewModel extends BaseViewModel {
-  NovelBookInfo bookInfo;
+  late NovelBookInfo bookInfo;
 
-  NovelReaderContentModel _contentModel;
-  NovelReaderConfigModel _configModel;
-  NovelBookNetModel _netModel;
-  NovelBookCacheModel _cacheModel;
-  NovelBookDBModel _dbModel;
+  late NovelReaderContentModel _contentModel;
+  late NovelReaderConfigModel _configModel;
+  late NovelBookNetModel _netModel;
 
-  ReaderProgressManager progressManager;
+  //late NovelBookCacheModel _cacheModel;
+  late NovelBookDBModel _dbModel;
 
-  OnContentChanged contentChangedCallback;
+  late ReaderProgressManager progressManager;
+
+  OnContentChanged? contentChangedCallback;
 
   Paint bgPaint = Paint();
 
   TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-  factory NovelReaderViewModel(
-          NovelBookInfo bookInfo,
-          NovelBookNetModel netModel,
-          NovelBookCacheModel cacheModel,
-          NovelBookDBModel dbModel) =>
-      NovelReaderViewModel._(bookInfo, netModel, cacheModel, dbModel);
+  factory NovelReaderViewModel(NovelBookInfo bookInfo,
+          NovelBookNetModel netModel, NovelBookDBModel dbModel) =>
+      NovelReaderViewModel._(bookInfo, netModel, dbModel);
 
   NovelReaderViewModel._(NovelBookInfo bookInfo, NovelBookNetModel netModel,
-      NovelBookCacheModel cacheModel, NovelBookDBModel dbModel) {
+      NovelBookDBModel dbModel) {
     this.bookInfo = bookInfo;
 
     _contentModel = NovelReaderContentModel(this);
@@ -50,12 +48,14 @@ class NovelReaderViewModel extends BaseViewModel {
     progressManager = ReaderProgressManager(this);
     _dbModel = dbModel;
     _netModel = netModel;
-    _cacheModel = cacheModel;
+    //_cacheModel = cacheModel;
   }
 
   @override
   SingleChildWidget getProviderContainer() {
-    return null;
+    return SingleChildBuilder(
+      builder: (context, child) => SizedBox.shrink(),
+    );
   }
 
   void registerContentOperateCallback(OnContentChanged contentChangedCallback) {
@@ -66,10 +66,11 @@ class NovelReaderViewModel extends BaseViewModel {
 
   /// ---------------------------- 配置相关 ------------------------------------
 
-  void setPageSize(Offset size){
-    if(_configModel.configEntity.pageSize.dx!=size.dx||_configModel.configEntity.pageSize.dy!=size.dy){
-      _configModel.configEntity.pageSize=size;
-      reApplyConfig(true,false);
+  void setPageSize(Offset size) {
+    if (_configModel.configEntity.pageSize.dx != size.dx ||
+        _configModel.configEntity.pageSize.dy != size.dy) {
+      _configModel.configEntity.pageSize = size;
+      reApplyConfig(true, false);
     }
   }
 
@@ -97,30 +98,36 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setCatalogData(String novelId, int chapterIndex, int pageIndex,
       NovelBookChapter catalog) async {
+    // 设置目录
     _configModel.catalog = catalog;
 
+    /// 初始化当前章节
     (_contentModel.dataValue ??= ReaderContentDataValue())
       ..novelId = novelId
       ..currentPageIndex = pageIndex
       ..chapterIndex = chapterIndex;
 
+    /// 初始化上一章
     (_contentModel.preDataValue ??= ReaderContentDataValue())
       ..novelId = novelId;
+    /// 初始化下一章
     (_contentModel.nextDataValue ??= ReaderContentDataValue())
       ..novelId = novelId;
 
+    //如果有前一章，那么章节下标减一，否则为-1
     if (isHasPreChapter()) {
-      _contentModel.preDataValue.chapterIndex =
-          _contentModel.dataValue.chapterIndex - 1;
+      _contentModel.preDataValue?.chapterIndex =
+          _contentModel.dataValue!.chapterIndex - 1;
     } else {
-      _contentModel.preDataValue..chapterIndex = -1;
+      _contentModel.preDataValue!..chapterIndex = -1;
     }
 
+    //如果有下一章，那么章节下标加一，否则为-1
     if (isHasNextChapter()) {
-      _contentModel.nextDataValue.chapterIndex =
-          _contentModel.dataValue.chapterIndex + 1;
+      _contentModel.nextDataValue!.chapterIndex =
+          _contentModel.dataValue!.chapterIndex + 1;
     } else {
-      _contentModel.nextDataValue..chapterIndex = -1;
+      _contentModel.nextDataValue!..chapterIndex = -1;
     }
 
     _contentModel?.startParseLooper();
@@ -131,7 +138,7 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setFontSize(int size) {
     _configModel.configEntity.fontSize = size;
-    reApplyConfig(true,true);
+    reApplyConfig(true, true);
   }
 
   void setAnimationMode(int mode) {
@@ -141,20 +148,20 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setLineHeight(int height) {
     _configModel.configEntity.lineHeight = height;
-    reApplyConfig(true,true);
+    reApplyConfig(true, true);
   }
 
   void setParagraphSpacing(int spacing) {
     _configModel.configEntity.paragraphSpacing = spacing;
-    reApplyConfig(true,true);
+    reApplyConfig(true, true);
   }
 
   void setBgColor(Color color) {
     bgPaint.color = color;
-    reApplyConfig(false,true);
+    reApplyConfig(false, true);
   }
 
-  void reApplyConfig(bool reCalculate,bool isNotify) {
+  void reApplyConfig(bool reCalculate, bool isNotify) {
     var currentDataValue = _contentModel.dataValue;
     var preDataValue = _contentModel.preDataValue;
     var nextDataValue = _contentModel.nextDataValue;
@@ -163,7 +170,7 @@ class NovelReaderViewModel extends BaseViewModel {
     preDataValue?.chapterCanvasDataMap?.clear();
     nextDataValue?.chapterCanvasDataMap?.clear();
 
-    if(isNotify) {
+    if (isNotify) {
       notifyRefresh();
     }
 
@@ -171,20 +178,21 @@ class NovelReaderViewModel extends BaseViewModel {
     _contentModel?.microContentParseQueue?.clear();
 
     if (reCalculate) {
-      if(currentDataValue!=null) {
+      if (currentDataValue != null) {
         parseChapterContent(ReaderParseContentDataValue(
             currentDataValue.contentData,
             currentDataValue.novelId,
             currentDataValue.title,
             currentDataValue.chapterIndex));
       }
-      if(preDataValue!=null) {
-        parseChapterContent(
-            ReaderParseContentDataValue(preDataValue.contentData,
-                preDataValue.novelId, preDataValue.title,
-                preDataValue.chapterIndex));
+      if (preDataValue != null) {
+        parseChapterContent(ReaderParseContentDataValue(
+            preDataValue.contentData,
+            preDataValue.novelId,
+            preDataValue.title,
+            preDataValue.chapterIndex));
       }
-      if(nextDataValue!=null) {
+      if (nextDataValue != null) {
         parseChapterContent(ReaderParseContentDataValue(
             nextDataValue.contentData,
             nextDataValue.novelId,
@@ -192,21 +200,21 @@ class NovelReaderViewModel extends BaseViewModel {
             nextDataValue.chapterIndex));
       }
     } else {
-      loadReaderContentDataValue(currentDataValue.chapterContentConfigs,
-          currentDataValue, true, false);
+      loadReaderContentDataValue(currentDataValue!.chapterContentConfigs,
+          currentDataValue!, true, false);
       loadReaderContentDataValue(
-          preDataValue.chapterContentConfigs, preDataValue, true, false);
+          preDataValue!.chapterContentConfigs, preDataValue!, true, false);
       loadReaderContentDataValue(
-          nextDataValue.chapterContentConfigs, nextDataValue, true, false);
+          nextDataValue!.chapterContentConfigs, nextDataValue, true, false);
     }
   }
 
   ReaderConfigEntity getConfigData() {
-    return _configModel.configEntity;
+    return _configModel.configEntity!;
   }
 
   NovelBookChapter getCatalog() {
-    return _configModel.catalog;
+    return _configModel.catalog!;
   }
 
   /// --------------------------- 网络数据处理 ---------------------------------
@@ -216,15 +224,380 @@ class NovelReaderViewModel extends BaseViewModel {
       return;
     }
 
-    String originalContent =
-        await _cacheModel.getCacheChapterContent(chapterData.link);
+    String? originalContent = '{"chapter":{"cpContent":"网络数据处理"}}';
+        // await _cacheModel.getCacheChapterContent(chapterData.link);
+
     if (originalContent == null) {
       parseChapterContent(ReaderParseContentDataValue(
           null, chapterData.novelId, chapterData.title, chapterData.order - 1)
         ..contentState = ContentState.STATE_NOT_FOUND);
     } else {
-      String content = _parseHtmlString(
-          json.decode(originalContent)["chapter"]["cpContent"]);
+      // String content = _parseHtmlString(
+      //     json.decode(originalContent)["chapter"]["cpContent"]);
+      String content = """
+    兜里的手机震动了两下，这是三分钟之内的第五次，蒋丞睁开眼睛。
+
+    车已经开了快三个小时了，车窗外的天还是很阴沉，身边坐的姑娘还在睡，脑门儿很踏实地枕在他肩上，右肩已经一片麻木。
+
+    他有些烦躁地耸了耸肩，姑娘只是偏了偏头，他用手指把姑娘的脑袋给推开，但没过几秒钟，脑袋又扣回了他肩膀上。
+
+    这样的动作已经反复了很多次，他都感觉这姑娘不是睡着了，这效果得是昏迷了。
+
+    烦躁。
+
+    还有多久能到站他不知道，车票拿到手的时候就没去查过，只知道自己要去的是一个甚至在这次行程之前都没听说过的小城。
+
+    人生呢，是很奇妙的。
+
+    手机第六次震动的时候，蒋丞叹了口气把手机掏了出来。
+
+    -怎么回事？
+
+    -怎么之前你完全没有提过要走的事？
+
+    -为什么突然走了？
+
+    -为什么没跟我说？
+
+    怎么怎么怎么为什么为什么为什么blablablabla……
+
+    消息是于昕发来的，估计是在补课打不了电话，一眼看过去全是问号。
+
+    他准备把手机放回兜里的时候，第七条消息发了过来。
+
+    -你再不回消息我们就算分手了！
+
+    终于不是问号了，他松了口气，把手机关机，放回了兜里。
+
+    分手对于他来说并没有什么意义，高中校园里恋俩月的爱，无非就是比别的同学说的话多点儿，有人给你带早点，打球有专属啦啦队……都没来得及发展到能干点儿什么的程度。
+
+    看着车窗外一直在变又似乎始终一样的风景，广播里终于报出了蒋丞的目的地。旁边的姑娘脑袋动了动，看样子是要醒，他迅速从书包里抽了根红色的记号笔出来，拔开笔帽拿在手里一下下转着。
+
+    姑娘醒了，抬起了脸，脑门儿上大一块印子，跟练了神功似地。
+
+    跟他的目光碰上了之后，姑娘抹了抹嘴角，摸出手机低头边按边说了一句：“不好意思。”
+
+    居然没听出什么歉意来？蒋丞冲她意味深长地笑了笑，姑娘愣了愣，视线落在了他手里旋转的记号笔上。
+
+    蒋丞把笔帽往笔上狠狠一套，咔地响了一声。
+
+    两秒钟之后她猛地捂住了脸，站起来往洗手间那边冲了过去。
+
+    蒋丞也站了起来，往车窗外看了看，一路阴沉到这里，终于下雪了。他从行李架上把自己的箱子拿下来，穿上外套走到了车门边，掏出手机开了机。
+
+    手机很安静，于昕的消息没有再响起，也没有未接。
+
+    感觉这是跟于昕好了这些日子以来，她最让人舒心的一次，不容易。
+
+    但是也没有除了于昕之外的别的人联系过他。
+
+    比如他以为会来接站的人。
+
+    跟着出站的人群走出了车站，蒋丞把羽绒服的拉链拉到头，看着这个在寒冷冬季里显得灰扑扑的城市。
+
+    火车站四周的混乱和破败就是他对这个城市的第一印象。
+
+    不，这算是第二印象，第一印象是老妈说出“回去吧，那里才是你真正的家”时他脑子里的一片茫然。
+
+    他拖着箱子走到了车站广场的最南边，人少，旁边还有一条小街，排列着各种感觉进去了就出不来的小旅店以及感觉吃了就中毒的小饭馆。
+
+    他坐到行李箱上，拿出手机又看了看，还是没有人联系他。
+
+    电话号码和地址他都有，但他就是不想动，不想说话也不想动，他从口袋里摸出烟叼着，他对自己突然会到这里来，充满了深深的，莫名其妙的，茫然的，绝望的，愤怒。
+
+    盯着地上的冰一边愤怒一边从兜里摸打火机，背靠着寒风缩成一团把烟点上了，看着在眼前飘散开去的烟雾，他叹了口气。
+
+    这要是让班主任看到，不知道会说什么。
+
+    不过没事儿，他已经在这里了，遥远的距离，别说班主任，就连跟他在一个屋子里生活了十几年的人，说不定都不会再见面了。
+
+    这个小破城市的小破学校，估计不会有人盯着他有没有抽烟。
+
+    烟只抽了一半蒋丞就有些冻得扛不住了，站起来打算打车找个地儿先吃饭，拖着箱子刚走了一步，就感觉有什么东西撞在了他脚踝上，劲儿还不小，撞得他一阵疼。
+
+    他皱着眉回过头，看到了身后有一块滑板。
+
+    接着没等他抬头再看看滑板是从哪儿飞过来的，一个人摔到了他脚边。
+
+    “你怎……”他条件反射地伸手想要去扶一把，但手伸到一半就停下了。
+
+    乱七八糟的头发披散着，剪得像狗啃似的有长有短，身上的衣服也挺脏的……要饭的？流浪汉？碰瓷的？小偷？
+
+    等这人抬起头时他才看清这是个看上去也就小学五六年级的小姑娘，虽然脸上抹的全是泥道子，但能看出皮肤挺白，眼睛很大。
+
+    不过他再次想去扶一把的手还没有启动，这小姑娘就被紧跟着过来的四五个小姑娘连拉带扯地拽走了，有人还在后面一脚踹到她背上，踹得她一个踉跄，差点儿又摔倒。
+
+    蒋丞立马明白了这是怎么回事儿，犹豫了一下转身拖了行李箱继续往前走。
+
+    身后转来的一阵笑声让他又停下了脚步。
+
+    心情不好的时候他不太愿意管闲事，碰巧现在心情相当超级特别以及非常不好，但刚才大眼睛小姑娘漆黑干净的眸子让他还是转回了头。
+
+    “哎！”他喊了一声。
+
+    几个小姑娘都停下了，一个看起来挑头的眼睛一斜：“干嘛！”
+
+    蒋丞拖着箱子慢慢走过去，盯着手还拽着大眼睛衣服的那个小姑娘，盯了两秒之后，那个小姑娘松了手。
+
+    他把大眼睛拉到自己身边，看着几个小姑娘：“没事儿了，走吧。”
+
+    “你谁啊！”挑头的有些怯，但还是很不满意地喊了一声。
+
+    “我是带着刀的大哥哥，”蒋丞看着她，“我用三十秒就能给你削个跟她同款的发型。”
+
+    “我一会儿就叫我哥过来收拾你！”挑头的明显不是惯犯，一听这话就有些缩了，但嘴上还是不服气。
+
+    “那你让他快点儿，”蒋丞一手拖着箱子，一手拉着大眼睛，“我吓死了，会跑得很快的。”
+
+    几个小姑娘走开了，大眼睛却挣开了他的手。
+
+    “你没事儿吧？”蒋丞问了一句。
+
+    大眼睛摇摇头，回头两步走到滑板旁边，一脚踏了上去，看着他。
+
+    “你的？”蒋丞又问。
+
+    大眼睛点了点头，脚下轻轻一点，踩着滑板滑到了他跟前儿，然后很稳地停下了，还是看着他。
+
+    “那你……回家吧。”蒋丞也点点头，掏出手机边走边想叫辆车过来。
+
+    走了一段之后听到身后有声音，他回头发现大眼睛还踩着滑板慢慢跟在他身后。
+
+    “怎么？”蒋丞看着她。
+
+    大眼睛不说话。
+
+    “怕她们回来？”蒋丞有些无奈地又问。
+
+    大眼睛摇了摇头。
+
+    “不是，你哑巴么？”蒋丞开始感觉到有些烦躁。
+
+    大眼睛继续摇头。
+
+    “我跟你说，我，”蒋丞指了指自己，“现在心情非常不好，非常暴躁，我揍小姑娘一点儿不手软知道么。”
+
+    大眼睛没动。
+
+    蒋丞盯了她一会儿，看她没有说话的意思，压着火拖着箱子再次往前走。
+
+    这会儿信号不太好，叫车的界面怎么也点不开，他一屁股坐到了公交车站旁边的石墩子上，点了一根烟。
+
+    大眼睛还踩着滑板，站在他旁边。
+
+    “你还有事儿？”蒋丞不耐烦地问，有点儿后悔管闲事儿，给自己找了个莫名其妙的麻烦。
+
+    大眼睛还是不说话，只是轻轻蹬了一下滑板，滑到了旁边的公交站牌下，仰着脸看了很长时间。
+
+    等她又踩着滑板回到蒋丞身边的时候，蒋丞从她迷茫的神情里猜到了原因，叹了口气：“你是不是迷路了？回不去了？”
+
+    大眼睛点了点头。
+
+    “是本地人吗？”蒋丞问。
+
+    点头。
+
+    “打电话叫你家里人过来接你。”蒋丞把自己的手机递给了她。
+
+    她接过手机，犹豫了一下，低头按了几下，然后又把手机还给了回来。
+
+    “什么意思？”蒋丞看着已经输好但没有拨出去的一个手机号，“我帮你打？”
+
+    点头。
+
+    “操，”蒋丞拧着眉按下了拨号，听着听筒里的拨号音，他又问了一句，“这是你家谁的号码？”
+
+    没等大眼睛回答，那边有人接了电话。
+
+    当然，估计她也不会回答，蒋丞冲着电话“喂”了一声。
+
+    “谁？”那边是一个男声。
+
+    “路人，”蒋丞都不知道该怎么说了，“我这儿有一个小姑娘……”
+
+    “不要。”那边说。
+
+    没等蒋丞回过神，电话就挂掉了。
+
+    “这人是谁？”蒋丞吐掉烟，指着大眼睛，“不说话就滚，我没耐心了。”
+
+    大眼睛蹲到他腿边，捡了块石头，在地上歪歪扭扭地写了一个“哥”字，然后抬头看着他。
+
+    “好吧，知道了。”蒋丞感觉这小姑娘可能真的是哑巴。
+
+    他再次拨了刚才那个号，这次响的时间很短，那边就接了起来：“谁。”
+
+    蒋丞看了看大眼睛：“你妹妹在我这儿……”
+
+    “撕票吧。”那边回答，然后又挂了电话。
+
+    “我操！”蒋丞一阵砸手机的冲动，指着大眼睛，“你名字！”
+
+    大眼睛低头用石头写下了自己的名字。
+
+    顾淼。
+
+    蒋丞没再打电话过去，只是发了条短信还配了张大眼睛的照片。
+
+    -顾淼，哑巴，滑板。
+
+    30秒之后那边把电话打了过来。
+
+    蒋丞接起电话：“晚了，已经撕票了。”
+
+    “不好意思，”那边说，“能告诉我在哪儿么，我过去看看还能不能拼起来。”
+
+    “……火车东站，特别破的那个，”蒋丞皱着眉，“她迷路了，你快点儿过来，我还有事。”
+
+    “谢谢，非常感谢，”那边回答，“马上到，你要是有急事可以先走的，让她在那儿等我就行。”
+
+    蒋丞把刚扔地上的半截烟捡起来弹进旁边的垃圾桶，又重新点了一根。
+
+    他本来想直接叫车走人，但又觉得根本没有人在意他是来还是去，是在还是不在，自己似乎没什么可急的。
+
+    顾淼在滑板上坐了一会儿之后就站了起来，踩着滑板在人行道上来回滑着。
+
+    蒋丞看了几眼之后有些吃惊，本来以为小姑娘就是瞎玩，但没想到各种上坡下坡台阶，加速急停掉头居然都轻松自如。
+
+    就是一脑袋被剪成碎草了的头发，脏兮兮的脸和衣服让人出戏。
+
+    玩了十几分钟之后，顾淼滑到他身边停下了，脚尖在滑板上一勾一挑，用手接住了板子之后，她抬手往蒋丞身后指了指。
+
+    “挺帅。”蒋丞冲她竖了竖拇指然后跟着回了头，看到了身后停着一辆黑色的摩托。
+
+    车上的人戴着头盔看不清脸，不过撑在人行道边儿上穿着灰色修身裤子和短靴的腿很抢眼。
+
+    长，还直。
+
+    “你哥啊？”蒋丞问顾淼。
+
+    顾淼点点头。
+
+    “你脑袋怎么回事儿？”车上的人摘下头盔下了车，走过来瞪着顾淼的头发，“还有脸和衣服……你掉粪坑里了？”
+
+    顾淼摇摇头。
+
+    “被同学欺负了吧。”蒋丞说。
+
+    “谢谢，”这人这才把目光转到了蒋丞脸上，伸出手，“我叫顾飞，是她哥。”
+
+    蒋丞站了起来，跟他握了握手：“不客气。”
+
+    顾飞看上去跟自己年纪应该差不多，只看眼睛不太像顾淼她哥，没顾淼眼睛那么大……皮肤还挺白的。
+
+    蒋丞目前的心情很像一盆烂西红柿，但顾飞的发型跟他的腿一样抢眼，所以他还是在烂西红柿缝里瞅了两眼。
+
+    很短的寸头，偏过脸的时候能看到两侧贴着头皮剃出的青皮上有五线谱图案，一边是低音谱号，另一边是个休止符，蒋丞没看清有几个点儿。
+
+    “你刚下车？”顾飞看了一眼他的行李箱。
+
+    “嗯。”蒋丞拿起手机继续想点开打车软件叫车。
+
+    “去哪儿，我送你？”顾飞说。
+
+    “不了。”蒋丞看了一眼他的车，再大的摩托车它也是摩托。
+
+    “她不占地儿。”顾飞又说。
+
+    “不了，谢谢。”蒋丞说。
+
+    “跟哥哥说谢谢，”顾飞指了指他，对顾淼说，“粪球。”
+
+    蒋丞转脸看着“粪球”，想听听她怎么说话，结果顾淼只是抱着滑板冲他鞠了个90度的躬。
+
+    顾飞跨到车上，戴上了头盔，顾淼很利索地爬上了后座，抱住了他的腰。
+
+    “谢了。”顾飞看了他一眼，发动车子掉转车头开走了。
+
+    蒋丞坐回石墩子上，网络这会儿倒是挺好的，但是居然好半天都没人接单，路过的出租车招手都他妈不停。
+
+    这什么鬼地方？
+
+    虽然心情很烂，他却一直没有来得及细细品味，只觉得这一段时间来他都活在混沌里，各种震惊和茫然包裹着，连气儿都喘不上来，甚至没有想过自己为什么会答应了所有的安排，就这么到了这里。
+
+    叛逆么？
+
+    就像老妈说的，我们家没有过你这样叛逆的人，全身都是刺。
+
+    当然了，本来也不是一家人，何况这几年都已经处得跟仇人一样，谁看了谁都是火。
+
+    蒋丞拧着眉，这些他都没来得及去琢磨。
+
+    一直到现在，此时此刻。
+
+    在这个陌生的寒冷的飘着雪的城市里，他才猛地回过神来。
+
+    绝望和痛苦以及对所有未知的抗拒让他觉得鼻子发酸。
+
+    低下头时，眼泪在脸上狠狠划了一道。
+
+    手机铃响起的时候，蒋丞正坐在一家不知道在什么位置的kfc里，他看了一眼这个陌生号码，接了起来：“喂？”
+
+    “是蒋丞吗？”那边一个中年男人的声音响起。
+
+    声音有点儿大，蒋丞把手机稍微拿开了点儿：“是的。”
+
+    “我是你爸爸。”那个人说。
+
+    “……哦。”蒋丞应了一声，这种对话听起来居然有几分好笑，他没忍住乐了。
+
+    那边的男人也跟着笑了两声：“我叫李保国，你知道的吧。”
+
+    “嗯。”蒋丞喝了口可乐。
+
+    “你的车到站了吗？”李保国问。
+
+    “到了。”蒋丞看了看表，到了两个小时了。
+
+    “地址你有吗？我没车没法接你，你打个车过来吧，我在路口等你。”李保国说。
+
+    “嗯。”蒋丞挂掉了电话。
+
+    这回运气还成，出来就打着了车，车上暖气还开得很足，热得人有种要发烧的感觉。
+
+    司机想聊天儿，但蒋丞始终靠着车窗沉默地往外看着，他起了几次头都没成功，最后放弃了，打开了收音机。
+
+    蒋丞努力地想看清这城市具体长什么样，不过天色已经很暗了，街灯都不怎么亮，还有光晕里漫天飞舞着的雪花，看得人眼晕。
+
+    他闭上了眼睛。
+
+    很快又睁开了。
+
+    也不知道怎么了，跟个娘们儿一样，真没劲。
+
+    车到地方停下了，蒋丞拎着行李箱下了车，站在路口。
+
+    没人。
+
+    声称在路口等他的“你爸爸”李保国没看到人影。
+
+    蒋丞压着心里的烦躁和脸上被风割过的疼痛，摸出了手机，拨了李保国的号码。
+
+    “哎这把太臭了……”好半天李保国才接了电话，“喂？”
+
+    “我在路口。”蒋丞一听他这动静，瞬间就想把电话给挂了去找个酒店。
+
+    “啊？这么快就到了？”李保国吃惊地喊了一声，“我在呢在呢，马上出来。”
+
+    这个马上，马了能有五分钟，在蒋丞拖着箱子在路口伸手拦车的时候，一个戴着雷锋帽的男人才跑了过来，一把按下了他的胳膊，嗓门儿很大地喊了一声：“蒋丞吧？”
+
+    蒋丞没吭声，他看到了李保国是从身后紧挨着的一栋居民楼里跑出来的。
+
+    马上？
+
+    再看到二楼窗口的好几个往这边张望的脑袋时，他真是完全不想再开口说话了。
+
+    “在朋友家待了一会儿，走走，”李保国拍拍他的肩，“回家回家……你看着比照片上要高啊。”
+
+    蒋丞低头看着泥泞的路面，跟着他往前走。
+
+    “哎，”李保国又拍了他后背两下，“这都多少年了啊，十几年了吧得有？可算是见着我儿子了！我得好好看看。”
+
+    李保国把脑袋探到了他眼前盯着看。
+
+    蒋丞把兜在下巴上的口罩拉起来戴好了。
+
+    突然觉得整个人一下全空了，连空气里都满满的全是迷茫。""";
       parseChapterContent(ReaderParseContentDataValue(content,
           chapterData.novelId, chapterData.title, chapterData.order - 1));
     }
@@ -236,7 +609,7 @@ class NovelReaderViewModel extends BaseViewModel {
     }
     var sourceInfo = await _netModel.getNovelBookSource(novelId);
     if (sourceInfo?.data != null && sourceInfo.data!.length > 0) {
-      var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
+      var result = await _netModel.getNovelBookCatalog(sourceInfo.data![0].id);
       if (result.isSuccess && result?.data != null) {
         setCatalogData(novelId, bookInfo.currentChapterIndex,
             bookInfo.currentPageIndex, result.data!);
@@ -244,7 +617,7 @@ class NovelReaderViewModel extends BaseViewModel {
     }
   }
 
-  String _parseHtmlString(String htmlString) {
+  String _parseHtmlString(String? htmlString) {
     if (htmlString == null || htmlString.length == 0) {
       return "加载出错，内容为空";
     }
@@ -279,27 +652,27 @@ class NovelReaderViewModel extends BaseViewModel {
     progressManager.checkPageCache();
   }
 
-  ReaderContentDataValue getCurrentContentDataValue() {
+  ReaderContentDataValue? getCurrentContentDataValue() {
     return _contentModel.dataValue;
   }
 
-  ReaderContentDataValue getPreContentDataValue() {
+  ReaderContentDataValue? getPreContentDataValue() {
     return _contentModel.preDataValue;
   }
 
-  ReaderContentDataValue getNextContentDataValue() {
+  ReaderContentDataValue? getNextContentDataValue() {
     return _contentModel.nextDataValue;
   }
 
-  void setCurrentContentDataValue(ReaderContentDataValue dataValue) {
+  void setCurrentContentDataValue(ReaderContentDataValue? dataValue) {
     _contentModel.dataValue = dataValue;
   }
 
-  void setPreContentDataValue(ReaderContentDataValue dataValue) {
+  void setPreContentDataValue(ReaderContentDataValue? dataValue) {
     _contentModel.preDataValue = dataValue;
   }
 
-  void setNextContentDataValue(ReaderContentDataValue dataValue) {
+  void setNextContentDataValue(ReaderContentDataValue? dataValue) {
     _contentModel.nextDataValue = dataValue;
   }
 
@@ -343,28 +716,28 @@ class NovelReaderViewModel extends BaseViewModel {
 
   Future<bool> goToTargetPage(int index) async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_JUMP_PAGE);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_JUMP_PAGE);
     }
     return progressManager.goToTargetPage(index);
   }
 
   Future<bool> goToTargetChapter(int index) async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_JUMP_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_JUMP_CHAPTER);
     }
     return progressManager.goToTargetChapter(index);
   }
 
   Future<bool> goToNextChapter() async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_NEXT_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_NEXT_CHAPTER);
     }
     return await progressManager.goToNextChapter(true);
   }
 
   Future<bool> goToPreChapter() async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_PRE_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_PRE_CHAPTER);
     }
     return await progressManager.goToPreChapter(true);
   }
@@ -375,18 +748,18 @@ class NovelReaderViewModel extends BaseViewModel {
 
   /// --------------------------- 展示相关部分 ---------------------------------
 
-  ReaderContentCanvasDataValue getPrePage() {
-    ReaderContentCanvasDataValue result;
+  ReaderContentCanvasDataValue? getPrePage() {
+    ReaderContentCanvasDataValue? result;
 
     if (progressManager.isHasPrePage()) {
-      var prePageInfo = _contentModel.dataValue
-          .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex - 1];
+      var prePageInfo = _contentModel.dataValue!
+          .chapterCanvasDataMap[_contentModel.dataValue!.currentPageIndex - 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = prePageInfo?.pagePicture
         ..pageImage = prePageInfo?.pageImage;
     } else if (progressManager.isHasPreChapter()) {
-      var prePageInfo = _contentModel.preDataValue.chapterCanvasDataMap[
-          _contentModel.preDataValue.chapterContentConfigs.length - 1];
+      var prePageInfo = _contentModel.preDataValue!.chapterCanvasDataMap[
+          _contentModel.preDataValue!.chapterContentConfigs.length - 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = prePageInfo?.pagePicture
         ..pageImage = prePageInfo?.pageImage;
@@ -397,26 +770,26 @@ class NovelReaderViewModel extends BaseViewModel {
     return result;
   }
 
-  ReaderContentCanvasDataValue getCurrentPage() {
+  ReaderContentCanvasDataValue? getCurrentPage() {
     if (_contentModel?.dataValue == null) {
       return null;
     }
 
-    return _contentModel.dataValue
-        .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex];
+    return _contentModel.dataValue!
+        .chapterCanvasDataMap[_contentModel.dataValue!.currentPageIndex];
   }
 
-  ReaderContentCanvasDataValue getNextPage() {
-    ReaderContentCanvasDataValue result;
+  ReaderContentCanvasDataValue? getNextPage() {
+    ReaderContentCanvasDataValue? result;
 
     if (progressManager.isHasNextPage()) {
-      var nextPageInfo = _contentModel.dataValue
-          .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex + 1];
+      var nextPageInfo = _contentModel.dataValue!
+          .chapterCanvasDataMap[_contentModel.dataValue!.currentPageIndex + 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = nextPageInfo?.pagePicture
         ..pageImage = nextPageInfo?.pageImage;
     } else if (progressManager.isHasNextChapter()) {
-      var nextPageInfo = _contentModel.nextDataValue.chapterCanvasDataMap[0];
+      var nextPageInfo = _contentModel.nextDataValue!.chapterCanvasDataMap[0];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = nextPageInfo?.pagePicture
         ..pageImage = nextPageInfo?.pageImage;
@@ -430,7 +803,7 @@ class NovelReaderViewModel extends BaseViewModel {
   /// ---------------------------- DB相关部分 ----------------------------------
 
   void updateDBInfo() {
-    ReaderContentDataValue dataValue = getCurrentContentDataValue();
+    ReaderContentDataValue? dataValue = getCurrentContentDataValue();
     if (dataValue == null) {
       return;
     }
@@ -446,13 +819,13 @@ class NovelReaderViewModel extends BaseViewModel {
     _configModel.clear();
     _contentModel.clear();
 
-    progressManager = null;
-    _configModel = null;
-    _contentModel = null;
+    //progressManager = null;
+    //_configModel = null;
+    //_contentModel = null;
   }
 
   void notifyRefresh() {
-    if(hasListeners){
+    if (hasListeners) {
       notifyListeners();
     }
   }

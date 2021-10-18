@@ -15,9 +15,9 @@ class NovelReaderContentModel {
 
   NovelReaderContentModel(this.viewModel);
 
-  ReaderContentDataValue dataValue;
-  ReaderContentDataValue preDataValue;
-  ReaderContentDataValue nextDataValue;
+  ReaderContentDataValue? dataValue;
+  ReaderContentDataValue? preDataValue;
+  ReaderContentDataValue? nextDataValue;
 
   ListQueue<ReaderContentDataValue> microContentParseQueue = ListQueue();
   ListQueue<ReaderContentDataValue> contentParseQueue = ListQueue();
@@ -37,7 +37,7 @@ class NovelReaderContentModel {
 
       isStartLooper = true;
 
-      if (viewModel == null || viewModel.isDisposed) {
+      if (viewModel.isDisposed) {
         break;
       }
 
@@ -77,23 +77,24 @@ class NovelReaderContentModel {
             ..pageImage = image;
 
       if (targetData.isSameChapter(dataValue)) {
-        dataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
+        dataValue!.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
 
         /// 如果正好是当前加载页，那么通知显示
-        if (dataValue.currentPageIndex == targetData.currentPageIndex) {
+        if (dataValue!.currentPageIndex == targetData.currentPageIndex) {
           viewModel.notifyRefresh();
         }
       } else if (targetData.isSameChapter(nextDataValue)) {
-        nextDataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
+        nextDataValue!.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
       } else if (targetData.isSameChapter(preDataValue)) {
-        preDataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
+        preDataValue!.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
       }
     }
   }
 
+  //解析章节内容
   void parseChapterContent(ReaderParseContentDataValue contentData) async {
     if (contentData.content == null || contentData.content!.length == 0) {
       contentData.content = "加载出错";
@@ -104,7 +105,7 @@ class NovelReaderContentModel {
     }
 
     ReaderContentDataValue contentDataValue = ReaderContentDataValue();
-    contentDataValue.chapterIndex = contentData.chapterIndex;
+    contentDataValue.chapterIndex = contentData.chapterIndex??0;
     contentDataValue.novelId = contentData.novelId;
 
     ReceivePort receivePort = ReceivePort();
@@ -146,32 +147,32 @@ class NovelReaderContentModel {
       _isolate?.kill();
       _isolate = null;
       var result = jsonDecode(jsonResult);
-      List<ReaderChapterPageContentConfig> contentConfigs = List();
-      for (Map map in result) {
+      List<ReaderChapterPageContentConfig> contentConfigs = List.empty(growable: true);
+      for (Map<String,dynamic> map in result) {
         contentConfigs.add(ReaderChapterPageContentConfig.fromMap(map));
       }
 
-      if (dataValue.chapterIndex == chapterIndex) {
-        dataValue.chapterContentConfigs.clear();
-        dataValue.chapterContentConfigs.addAll(contentConfigs);
-        dataValue.contentData = content;
-        dataValue.title = title;
-        loadReaderContentDataValue(contentConfigs, dataValue, true, false);
-        viewModel.checkChapterCache();
-      } else if (preDataValue.chapterIndex == chapterIndex) {
-        preDataValue.chapterContentConfigs.clear();
-        preDataValue.chapterContentConfigs.addAll(contentConfigs);
-        preDataValue.currentPageIndex =
-            preDataValue.chapterContentConfigs.length - 1;
-        preDataValue.contentData = content;
-        preDataValue.title = title;
-        loadReaderContentDataValue(contentConfigs, preDataValue, false, true);
-      } else if (nextDataValue.chapterIndex == chapterIndex) {
-        nextDataValue.chapterContentConfigs.clear();
-        nextDataValue.chapterContentConfigs.addAll(contentConfigs);
-        nextDataValue.contentData = content;
-        nextDataValue.title = title;
-        loadReaderContentDataValue(contentConfigs, nextDataValue, false, false);
+      if (dataValue!.chapterIndex == chapterIndex) {
+        dataValue!.chapterContentConfigs.clear();
+        dataValue!.chapterContentConfigs.addAll(contentConfigs);
+        dataValue!.contentData = content;
+        dataValue!.title = title;
+        loadReaderContentDataValue(contentConfigs, dataValue!, true, false);
+        viewModel?.checkChapterCache();
+      } else if (preDataValue!.chapterIndex == chapterIndex) {
+        preDataValue!.chapterContentConfigs.clear();
+        preDataValue!.chapterContentConfigs.addAll(contentConfigs);
+        preDataValue!.currentPageIndex =
+            preDataValue!.chapterContentConfigs.length - 1;
+        preDataValue!.contentData = content;
+        preDataValue!.title = title;
+        loadReaderContentDataValue(contentConfigs, preDataValue!, false, true);
+      } else if (nextDataValue!.chapterIndex == chapterIndex) {
+        nextDataValue!.chapterContentConfigs.clear();
+        nextDataValue!.chapterContentConfigs.addAll(contentConfigs);
+        nextDataValue!.contentData = content;
+        nextDataValue!.title = title;
+        loadReaderContentDataValue(contentConfigs, nextDataValue!, false, false);
       }
     }
   }
@@ -292,7 +293,7 @@ class NovelReaderContentModel {
         viewModel.bgPaint);
 
     viewModel.textPainter.text = TextSpan(
-        text: "${dataValue.title}",
+        text: "${dataValue.title}=======>",
         style: TextStyle(
             color: Colors.grey[700],
             height: configEntity.titleHeight.toDouble() /
@@ -356,15 +357,15 @@ class NovelReaderContentModel {
   }
 
   void clear() {
-    viewModel = null;
+    //viewModel = null;
     isStartLooper = false;
     dataValue = null;
     preDataValue = null;
     nextDataValue = null;
     contentParseQueue.clear();
-    contentParseQueue = null;
+    //contentParseQueue = null;
     microContentParseQueue.clear();
-    microContentParseQueue = null;
+    //microContentParseQueue = null;
 
     _isolate?.kill();
     _isolate = null;

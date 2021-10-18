@@ -30,7 +30,7 @@ class NovelIntroBottomMenuViewState extends BaseStatefulViewState<
       return Container();
     } else {
       List<NovelBookInfo> currentBookShelf =
-          viewModel!.bookshelfInfo.currentBookShelf;
+          viewModel!.bookshelfInfo!.currentBookShelf;
 
       NovelBookInfo currentBookInfo = NovelBookInfo()
         ..bookId = widget.bookInfo?.id

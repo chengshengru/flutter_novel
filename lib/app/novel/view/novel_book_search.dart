@@ -25,7 +25,7 @@ class NovelSearchView extends BaseStatefulView<NovelBookSearchViewModel> {
 class _NovelSearchViewState
     extends BaseStatefulViewState<NovelSearchView, NovelBookSearchViewModel> {
   StreamController? inputStreamController = StreamController();
-  late Observable switchObservable;
+  //late Observable switchObservable;
   late FocusNode _focusNode;
 
   @override
@@ -116,8 +116,8 @@ class _NovelSearchViewState
 
   @override
   void initData() {
-    switchObservable = Observable(inputStreamController.stream)
-        .debounceTime(const Duration(milliseconds: 300));
+    // switchObservable = Observable(inputStreamController.stream)
+    //     .debounceTime(const Duration(milliseconds: 300));
 
     _focusNode = FocusNode();
     _focusNode.addListener(_onTextFocusChanged);
@@ -125,9 +125,9 @@ class _NovelSearchViewState
 
   @override
   void loadData(BuildContext context, NovelBookSearchViewModel? viewModel) {
-    switchObservable.listen((word) {
-      viewModel?.getSearchWord(word);
-    });
+    // switchObservable.listen((word) {
+    //   viewModel?.getSearchWord(word);
+    // });
 
     viewModel?.getHotSearchWord();
   }

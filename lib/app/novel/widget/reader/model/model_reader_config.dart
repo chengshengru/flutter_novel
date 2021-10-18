@@ -5,12 +5,10 @@ import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_rea
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
 
 class NovelReaderConfigModel {
+  NovelReaderViewModel? viewModel;
 
-
-  NovelReaderViewModel viewModel;
-
-  NovelBookChapter catalog;
-  bool isMenuOpen=false;
+  NovelBookChapter? catalog;
+  bool isMenuOpen = false;
 
   ReaderConfigEntity configEntity = ReaderConfigEntity();
 
@@ -19,8 +17,8 @@ class NovelReaderConfigModel {
   void clear() {
     viewModel = null;
     catalog = null;
-    configEntity = null;
-    isMenuOpen=false;
+    //configEntity = null;
+    isMenuOpen = false;
   }
 }
 
@@ -33,7 +31,7 @@ class ReaderConfigEntity {
 
   int currentPageIndex = 0;
   int currentChapterIndex = 0;
-  String novelId;
+  String? novelId;
 
   int fontSize = 20;
   int lineHeight = 30;
@@ -41,23 +39,24 @@ class ReaderConfigEntity {
 
   Offset pageSize;
 
-  int contentPadding=10;
-  int titleHeight=25;
-  int bottomTipHeight=20;
+  int contentPadding = 10;
+  int titleHeight = 25;
+  int bottomTipHeight = 20;
 
-  int titleFontSize=20;
-  int bottomTipFontSize=20;
+  int titleFontSize = 20;
+  int bottomTipFontSize = 20;
 
   ReaderConfigEntity(
-      {this.currentAnimationMode,
-      this.currentCanvasBgColor,
-      this.currentPageIndex,
-      this.currentChapterIndex,
+      {this.currentAnimationMode =
+          ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN,
+      this.currentCanvasBgColor = const Color(0xfffff2cc),
+      this.currentPageIndex = 0,
+      this.currentChapterIndex = 0,
       this.novelId,
-      this.fontSize,
-      this.lineHeight,
-      this.paragraphSpacing,
-      this.pageSize});
+      this.fontSize = 20,
+      this.lineHeight = 30,
+      this.paragraphSpacing = 10,
+      this.pageSize = Offset.zero});
 
   ReaderConfigEntity copy() {
     return ReaderConfigEntity(

@@ -7,7 +7,8 @@ class NovelConfigManager {
   static const String KEY_CONFIG_BRIGHTNESS = "key_config_brightness";
   static const String KEY_CONFIG_FONT_SIZE = "key_config_font_size";
   static const String KEY_CONFIG_LINE_HEIGHT = "key_config_line_height";
-  static const String KEY_CONFIG_PARAGRAPH_SPACING = "key_config_paragraph_spacing";
+  static const String KEY_CONFIG_PARAGRAPH_SPACING =
+      "key_config_paragraph_spacing";
   static const String KEY_CONFIG_ANIMATION_MODE = "key_config_animation_mode";
   static const String KEY_CONFIG_BG_COLOR = "key_config_bg_color";
   static const String KEY_CONFIG_LAST_READ_INFO = "key_config_last_read_info";
@@ -18,21 +19,16 @@ class NovelConfigManager {
   static const int VALUE_DEFAULT_LINE_HEIGHT = 30;
   static const int VALUE_DEFAULT_PARAGRAPH_SPACING = 10;
 
-  static NovelConfigManager _instance;
+  static final NovelConfigManager _instance = NovelConfigManager._();
 
-  double brightness;
-  int fontSize;
-  int lineHeight;
-  int paragraphSpacing;
-  int animationMode;
-  Color bgColor;
+  double? brightness;
+  int? fontSize;
+  int? lineHeight;
+  int? paragraphSpacing;
+  int? animationMode;
+  Color? bgColor;
 
-  factory NovelConfigManager() {
-    if (_instance == null) {
-      _instance = new NovelConfigManager._();
-    }
-    return _instance;
-  }
+  factory NovelConfigManager() => _instance;
 
   NovelConfigManager._() {
     getUserBrightnessConfig().then((value) {
@@ -52,96 +48,96 @@ class NovelConfigManager {
       brightness = prefs.getDouble(KEY_CONFIG_BRIGHTNESS);
       brightness ??= VALUE_DEFAULT_CONFIG_BRIGHTNESS;
     }
-    return brightness;
+    return brightness!;
   }
 
   void setUserBrightnessConfig(double data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setDouble(KEY_CONFIG_BRIGHTNESS, data).then((value){
+    await prefs.setDouble(KEY_CONFIG_BRIGHTNESS, data).then((value) {
       brightness = data;
     });
   }
 
   Future<int> getUserFontSizeConfig() async {
-    if(fontSize==null) {
+    if (fontSize == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       fontSize = prefs.getInt(KEY_CONFIG_FONT_SIZE);
       fontSize ??= VALUE_DEFAULT_FONT_SIZE;
     }
-    return fontSize;
+    return fontSize!;
   }
 
   void setUserFontSizeConfig(int size) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KEY_CONFIG_FONT_SIZE, size).then((value){
-      fontSize=size;
+    await prefs.setInt(KEY_CONFIG_FONT_SIZE, size).then((value) {
+      fontSize = size;
     });
   }
 
   Future<int> getUserLineHeightConfig() async {
-    if(lineHeight==null) {
+    if (lineHeight == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       lineHeight = prefs.getInt(KEY_CONFIG_LINE_HEIGHT);
       lineHeight ??= VALUE_DEFAULT_LINE_HEIGHT;
     }
-    return lineHeight;
+    return lineHeight!;
   }
 
   void setUserLineHeightConfig(int height) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KEY_CONFIG_LINE_HEIGHT, height).then((value){
-      lineHeight=height;
+    await prefs.setInt(KEY_CONFIG_LINE_HEIGHT, height).then((value) {
+      lineHeight = height;
     });
   }
 
   Future<int> getUserParagraphSpacingConfig() async {
-    if(paragraphSpacing==null) {
+    if (paragraphSpacing == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       paragraphSpacing = prefs.getInt(KEY_CONFIG_PARAGRAPH_SPACING);
       paragraphSpacing ??= VALUE_DEFAULT_PARAGRAPH_SPACING;
     }
-    return paragraphSpacing;
+    return paragraphSpacing!;
   }
 
   void setUserParagraphSpacingConfig(int spacing) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KEY_CONFIG_PARAGRAPH_SPACING, spacing).then((value){
-      paragraphSpacing=spacing;
+    await prefs.setInt(KEY_CONFIG_PARAGRAPH_SPACING, spacing).then((value) {
+      paragraphSpacing = spacing;
     });
   }
 
   Future<int> getUserConfigAnimationMode() async {
-    if(animationMode==null) {
+    if (animationMode == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       animationMode = prefs.getInt(KEY_CONFIG_ANIMATION_MODE);
-      animationMode??=ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN;
+      animationMode ??= ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN;
     }
 
-    return animationMode;
+    return animationMode!;
   }
 
   void setUserConfigAnimationMode(int mode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KEY_CONFIG_ANIMATION_MODE, mode).then((value){
-      animationMode=mode;
+    await prefs.setInt(KEY_CONFIG_ANIMATION_MODE, mode).then((value) {
+      animationMode = mode;
     });
   }
 
   Future<Color> getUserConfigBgColor() async {
-    if(bgColor==null) {
+    if (bgColor == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int color=prefs.getInt(KEY_CONFIG_BG_COLOR);
-      color??=0xfffff2cc;
-      bgColor=Color(color);
+      int color = prefs.getInt(KEY_CONFIG_BG_COLOR);
+      color ??= 0xfffff2cc;
+      bgColor = Color(color);
     }
 
-    return bgColor;
+    return bgColor!;
   }
 
   void setUserConfigBgColor(Color bgColor) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt(KEY_CONFIG_BG_COLOR, bgColor.value).then((value){
-      this.bgColor=bgColor;
+    await prefs.setInt(KEY_CONFIG_BG_COLOR, bgColor.value).then((value) {
+      this.bgColor = bgColor;
     });
   }
 
